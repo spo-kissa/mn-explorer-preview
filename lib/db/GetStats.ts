@@ -1,9 +1,10 @@
 import prisma from "@/lib/db";
 
 interface Stats {
-    latestBlock: number | null;
-    indexedBlocks: number | null;
-    totalTransactions: number | null;
+    latestBlockHeight: number;
+    indexedBlocks: number;
+    totalTransactions: number;
+    totalContracts: number;
 }
 
 export default async function GetStats(): Promise<Stats> {
@@ -22,9 +23,12 @@ export default async function GetStats(): Promise<Stats> {
     
     const totalTransactions = await prisma.transactions.count();
 
+    const totalContracts = await prisma.tx_contract_actions.count();
+
     return {
-        latestBlock: latestBlock?.height ?? null,
-        indexedBlocks: indexedBlocks ?? null,
-        totalTransactions: totalTransactions ?? null,
+        latestBlockHeight: latestBlock?.height ?? 0,
+        indexedBlocks,
+        totalTransactions,
+        totalContracts,
     };
 }

@@ -20,11 +20,11 @@ export default function IconCard({ icon, title, value }: IconCardProps) {
     }
 
     return (
-        <div className="flex flex-row items-center justify-center w-full h-16 border-[1px] border-gray-300 dark:border-zinc-700 rounded-md p-2">
-            <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-gray-100 rounded-md object-contain" />
-            <div className="flex flex-col w-full items-start justify-start ml-2">
-                <span className="text-sm font-medium">{title}</span>
-                <span className="text-xl font-bold">{value}</span>
+        <div className="flex flex-row items-center justify-center w-full border-[1px] border-gray-300 dark:border-zinc-700 rounded-md p-2">
+            <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-gray-100 rounded-md object-contain ml-1" />
+            <div className="flex flex-col w-full items-start justify-start mt-1 ml-2">
+                <span className="flex items-center justify-center text-xs font-medium">{title}</span>
+                <span className="flex items-center justify-center w-full text-xl font-bold">{value}</span>
             </div>
         </div>
     );
