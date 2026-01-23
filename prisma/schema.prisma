@@ -1,0 +1,359 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["mn_preview_indexer", "public"]
+}
+
+model account_balances {
+  id         BigInt  @id @default(autoincrement())
+  account_id BigInt
+  asset_id   String  @default("MID") @db.VarChar(128)
+  block_id   BigInt
+  balance    Decimal @db.Decimal(38, 0)
+  blocks     blocks  @relation(fields: [block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([account_id, asset_id, block_id])
+  @@index([account_id, asset_id, block_id(sort: Desc)], map: "idx_acc_bal_account_latest")
+  @@schema("mn_preview_indexer")
+}
+
+model account_tx {
+  id           BigInt       @id @default(autoincrement())
+  account_id   BigInt
+  tx_id        BigInt
+  block_id     BigInt
+  direction    Int          @db.SmallInt
+  value        Decimal?     @db.Decimal(38, 0)
+  blocks       blocks       @relation(fields: [block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transactions transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([account_id, tx_id])
+  @@index([account_id, block_id(sort: Desc), tx_id], map: "idx_account_tx_account_block")
+  @@schema("mn_preview_indexer")
+}
+
+model addresses {
+  id                     BigInt       @id @default(autoincrement())
+  unshielded_address     String       @unique @db.VarChar(100)
+  unshielded_address_hex String       @unique @db.VarChar(66)
+  created_at             DateTime?    @db.Timestamptz(6)
+  updated_at             DateTime?    @db.Timestamptz(6)
+  tx_inputs              tx_inputs[]
+  tx_outputs             tx_outputs[]
+
+  @@schema("mn_preview_indexer")
+}
+
+model blocks {
+  id                                                     BigInt             @id @default(autoincrement())
+  hash                                                   String             @unique @db.VarChar(66)
+  height                                                 BigInt             @unique
+  parent_hash                                            String             @db.VarChar(66)
+  slot                                                   BigInt
+  timestamp                                              DateTime           @db.Timestamptz(6)
+  tx_count                                               Int                @default(0)
+  state_root                                             String?            @db.VarChar(66)
+  is_finalized                                           Boolean            @default(false)
+  raw                                                    Json
+  author                                                 String?            @db.VarChar(66)
+  protocol_version                                       Int                @default(0)
+  ledger_parameters                                      String?
+  account_balances                                       account_balances[]
+  account_tx                                             account_tx[]
+  events                                                 events[]
+  extrinsics                                             extrinsics[]
+  shielded_notes_shielded_notes_created_block_idToblocks shielded_notes[]   @relation("shielded_notes_created_block_idToblocks")
+  shielded_notes_shielded_notes_spent_block_idToblocks   shielded_notes[]   @relation("shielded_notes_spent_block_idToblocks")
+  transactions                                           transactions[]
+
+  @@index([author], map: "idx_blocks_author")
+  @@index([parent_hash], map: "idx_blocks_parent_hash")
+  @@index([timestamp(sort: Desc)], map: "idx_blocks_timestamp_desc")
+  @@schema("mn_preview_indexer")
+}
+
+model events {
+  id             BigInt      @id @default(autoincrement())
+  block_id       BigInt
+  extrinsic_id   BigInt?
+  index_in_block Int
+  section        String      @db.VarChar(64)
+  method         String      @db.VarChar(64)
+  data           Json
+  topics         Json?
+  blocks         blocks      @relation(fields: [block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  extrinsics     extrinsics? @relation(fields: [extrinsic_id], references: [id], onUpdate: NoAction)
+
+  @@unique([block_id, index_in_block])
+  @@index([section, method], map: "idx_events_section_method")
+  @@index([topics], map: "idx_events_topics_gin", type: Gin)
+  @@schema("mn_preview_indexer")
+}
+
+model extrinsics {
+  id             BigInt   @id @default(autoincrement())
+  block_id       BigInt
+  index_in_block Int
+  section        String   @db.VarChar(64)
+  method         String   @db.VarChar(64)
+  signer         String?  @db.VarChar(128)
+  args           Json
+  raw            Json?
+  hash           String?  @db.VarChar(66)
+  data           String?
+  events         events[]
+  blocks         blocks   @relation(fields: [block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([block_id, index_in_block])
+  @@index([hash], map: "idx_extrinsics_hash")
+  @@index([section, method], map: "idx_extrinsics_section_method")
+  @@schema("mn_preview_indexer")
+}
+
+model indexer_state {
+  key   String @id @db.VarChar(255)
+  value String
+
+  @@index([key], map: "idx_indexer_state_key")
+  @@schema("mn_preview_indexer")
+}
+
+/// This table has subclasses and requires additional setup for migrations. Visit https://pris.ly/d/table-inheritance for more info.
+model schema_migrations {
+  version    String   @id @db.VarChar(255)
+  name       String   @db.VarChar(255)
+  applied_at DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([applied_at(sort: Desc)], map: "idx_schema_migrations_applied_at")
+  @@schema("mn_preview_indexer")
+}
+
+model shielded_notes {
+  id                                                      BigInt        @id @default(autoincrement())
+  commitment                                              String        @unique @db.VarChar(128)
+  asset_id                                                String        @default("MID") @db.VarChar(128)
+  value                                                   Decimal       @db.Decimal(38, 0)
+  created_tx_id                                           BigInt
+  created_block_id                                        BigInt
+  spent_tx_id                                             BigInt?
+  spent_block_id                                          BigInt?
+  nullifier                                               String?       @db.VarChar(128)
+  status                                                  Int           @default(0) @db.SmallInt
+  raw                                                     Json
+  blocks_shielded_notes_created_block_idToblocks          blocks        @relation("shielded_notes_created_block_idToblocks", fields: [created_block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transactions_shielded_notes_created_tx_idTotransactions transactions  @relation("shielded_notes_created_tx_idTotransactions", fields: [created_tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  blocks_shielded_notes_spent_block_idToblocks            blocks?       @relation("shielded_notes_spent_block_idToblocks", fields: [spent_block_id], references: [id], onUpdate: NoAction)
+  transactions_shielded_notes_spent_tx_idTotransactions   transactions? @relation("shielded_notes_spent_tx_idTotransactions", fields: [spent_tx_id], references: [id], onUpdate: NoAction)
+
+  @@index([created_block_id(sort: Desc)], map: "idx_notes_created_block")
+  @@index([nullifier], map: "idx_notes_nullifier")
+  @@index([status, value(sort: Desc)], map: "idx_notes_status_value")
+  @@schema("mn_preview_indexer")
+}
+
+model transactions {
+  id                                                          BigInt                   @id @default(autoincrement())
+  hash                                                        String                   @unique @db.VarChar(66)
+  block_id                                                    BigInt
+  index_in_block                                              Int
+  timestamp                                                   DateTime                 @db.Timestamptz(6)
+  is_shielded                                                 Boolean                  @default(false)
+  fee                                                         Decimal?                 @db.Decimal(38, 0)
+  total_input                                                 Decimal?                 @db.Decimal(38, 0)
+  total_output                                                Decimal?                 @db.Decimal(38, 0)
+  status                                                      String?                  @default("SUCCESS") @db.VarChar(50)
+  raw                                                         String
+  block_height                                                BigInt?
+  block_hash                                                  String?                  @db.VarChar(66)
+  protocol_version                                            Int
+  transaction_id                                              BigInt?
+  start_index                                                 Int?
+  end_index                                                   Int?
+  paid_fees                                                   String?
+  estimated_fees                                              String?
+  unshielded_total_input                                      Decimal                  @default(0) @db.Decimal(17, 0)
+  unshielded_total_output                                     Decimal                  @default(0) @db.Decimal(17, 0)
+  block_ledger_parameters                                     String?
+  account_tx                                                  account_tx[]
+  shielded_notes_shielded_notes_created_tx_idTotransactions   shielded_notes[]         @relation("shielded_notes_created_tx_idTotransactions")
+  shielded_notes_shielded_notes_spent_tx_idTotransactions     shielded_notes[]         @relation("shielded_notes_spent_tx_idTotransactions")
+  blocks                                                      blocks                   @relation(fields: [block_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tx_contract_actions                                         tx_contract_actions[]
+  tx_dust_ledger_events                                       tx_dust_ledger_events[]
+  tx_identifiers                                              tx_identifiers[]
+  tx_inputs                                                   tx_inputs[]
+  tx_outputs_tx_outputs_spent_at_transaction_idTotransactions tx_outputs[]             @relation("tx_outputs_spent_at_transaction_idTotransactions")
+  tx_outputs_tx_outputs_tx_idTotransactions                   tx_outputs[]             @relation("tx_outputs_tx_idTotransactions")
+  tx_results                                                  tx_results[]
+  tx_zswap_ledger_events                                      tx_zswap_ledger_events[]
+
+  @@index([block_id, index_in_block], map: "idx_txs_block_id_index")
+  @@index([timestamp(sort: Desc)], map: "idx_txs_timestamp")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_contract_action_balances {
+  id                    BigInt              @id @default(autoincrement())
+  type_name             String              @db.VarChar(50)
+  tx_contract_action_id BigInt
+  token_type            String              @db.VarChar(50)
+  amount                Decimal             @db.Decimal(38, 0)
+  tx_contract_actions   tx_contract_actions @relation(fields: [tx_contract_action_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_contract_action_id, type_name], map: "idx_tx_contract_action_balances_tx_contract_action_id_type_name")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_contract_actions {
+  id                          BigInt                        @id @default(autoincrement())
+  tx_id                       BigInt
+  index_in_tx                 Int
+  type_name                   String?                       @db.VarChar(50)
+  address                     String                        @db.VarChar(66)
+  address_id                  BigInt?
+  state                       String
+  tx_hash                     String                        @db.VarChar(66)
+  zswap_state                 String
+  deploy                      String?
+  entry_point                 String?
+  tx_contract_action_balances tx_contract_action_balances[]
+  transactions                transactions                  @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, index_in_tx], map: "idx_tx_contract_actions_tx_id_index_index_in_tx")
+  @@index([address_id], map: "idx_tx_contract_actions_address_id")
+  @@index([tx_hash], map: "idx_tx_contract_actions_tx_hash")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_dust_ledger_events {
+  id           BigInt       @id @default(autoincrement())
+  tx_id        BigInt
+  index_in_tx  Int
+  event_id     Int
+  event_name   String?      @db.VarChar(50)
+  event_raw    String
+  output_nonce String?      @db.VarChar(66)
+  transactions transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, index_in_tx])
+  @@index([event_id], map: "idx_tx_dust_ledger_events_event_id")
+  @@index([event_name], map: "idx_tx_dust_ledger_events_event_name")
+  @@index([index_in_tx], map: "idx_tx_dust_ledger_events_index_in_tx")
+  @@index([tx_id], map: "idx_tx_dust_ledger_events_tx_id")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_identifiers {
+  id           BigInt       @id @default(autoincrement())
+  tx_id        BigInt
+  tx_hash      String       @db.VarChar(66)
+  index_in_tx  Int
+  identifier   String       @db.VarChar(66)
+  transactions transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, index_in_tx])
+  @@index([identifier], map: "idx_tx_identifiers_identifier")
+  @@index([tx_hash], map: "idx_tx_identifiers_tx_hash")
+  @@index([tx_id], map: "idx_tx_identifiers_tx_id")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_inputs {
+  id                             BigInt       @id @default(autoincrement())
+  tx_id                          BigInt
+  index                          Int
+  prev_tx_hash                   String?      @db.VarChar(66)
+  prev_tx_output_ix              Int?
+  prev_output_id                 BigInt?
+  raw                            Json
+  address_id                     BigInt?
+  created_at_tx_hash             String?      @db.VarChar(66)
+  spent_at_tx_hash               String?      @db.VarChar(66)
+  intent_hash                    String?      @db.VarChar(66)
+  ctime                          DateTime?    @db.Timestamptz(6)
+  registered_for_dust_generation Boolean      @default(false)
+  token_type                     String?      @db.VarChar(66)
+  spent_at_transaction_id        BigInt?
+  spent_at_transaction_hash      String?      @db.VarChar(66)
+  account_addr                   String?      @db.VarChar(128)
+  value                          Decimal?     @db.Decimal(38, 0)
+  shielded                       Boolean      @default(false)
+  initial_nonce                  String?      @db.VarChar(66)
+  addresses                      addresses?   @relation(fields: [address_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tx_outputs                     tx_outputs?  @relation(fields: [prev_output_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  transactions                   transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, index], map: "idx_tx_inputs_tx_index")
+  @@index([account_addr], map: "idx_tx_inputs_account_addr")
+  @@index([address_id], map: "idx_tx_inputs_address_id")
+  @@index([prev_tx_hash, prev_tx_output_ix], map: "idx_tx_inputs_prev_ref")
+  @@index([shielded], map: "idx_tx_inputs_shielded")
+  @@index([value], map: "idx_tx_inputs_value")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_outputs {
+  id                                                            BigInt        @id @default(autoincrement())
+  tx_id                                                         BigInt
+  index                                                         Int
+  account_addr                                                  String?       @db.VarChar(128)
+  asset_id                                                      String        @default("MID") @db.VarChar(128)
+  value                                                         Decimal       @db.Decimal(38, 0)
+  shielded                                                      Boolean       @default(false)
+  note_commitment                                               String?       @db.VarChar(128)
+  raw                                                           Json
+  address_id                                                    BigInt?
+  created_at_tx_hash                                            String?       @db.VarChar(66)
+  spent_at_tx_hash                                              String?       @db.VarChar(66)
+  intent_hash                                                   String?       @db.VarChar(66)
+  ctime                                                         DateTime?     @db.Timestamptz(6)
+  initial_nonce                                                 String?       @db.VarChar(66)
+  registered_for_dust_generation                                Boolean       @default(false)
+  token_type                                                    String?       @db.VarChar(66)
+  spent_at_transaction_id                                       BigInt?
+  spent_at_transaction_hash                                     String?       @db.VarChar(66)
+  tx_inputs                                                     tx_inputs[]
+  addresses                                                     addresses?    @relation(fields: [address_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transactions_tx_outputs_spent_at_transaction_idTotransactions transactions? @relation("tx_outputs_spent_at_transaction_idTotransactions", fields: [spent_at_transaction_id], references: [id], onUpdate: NoAction)
+  transactions_tx_outputs_tx_idTotransactions                   transactions  @relation("tx_outputs_tx_idTotransactions", fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, index], map: "idx_tx_outputs_tx_index")
+  @@index([account_addr], map: "idx_tx_outputs_addr")
+  @@index([address_id], map: "idx_tx_outputs_address_id")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_results {
+  id           BigInt       @id @default(autoincrement())
+  tx_id        BigInt
+  tx_hash      String       @db.VarChar(66)
+  segment_id   Int
+  success      Boolean
+  transactions transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tx_id, segment_id])
+  @@index([segment_id], map: "idx_tx_results_segment_id")
+  @@index([tx_hash], map: "idx_tx_results_tx_hash")
+  @@index([tx_id], map: "idx_tx_results_tx_id")
+  @@schema("mn_preview_indexer")
+}
+
+model tx_zswap_ledger_events {
+  tx_id        BigInt
+  index_in_tx  Int
+  type_name    String?      @db.VarChar(255)
+  event_id     Int
+  max_id       Int
+  raw          String
+  transactions transactions @relation(fields: [tx_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "zswap_ledger_events_tx_id_fkey")
+
+  @@unique([tx_id, index_in_tx, event_id], map: "idx_zswap_ledger_events_tx_id_index_event_id")
+  @@index([event_id], map: "idx_zswap_ledger_events_event_id")
+  @@index([max_id], map: "idx_zswap_ledger_events_max_id")
+  @@index([tx_id, index_in_tx], map: "idx_zswap_ledger_events_tx_id_index")
+  @@schema("mn_preview_indexer")
+}
