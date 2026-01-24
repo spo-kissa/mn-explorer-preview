@@ -11,12 +11,10 @@ export default function Home() {
 
     return (
         <div className="w-full">
-            <div className="max-w-4xl mx-auto mb-10 flex flex-row gap-2 items-center">
-                <SearchElement />
-            </div>
+            
             <Stats stats={status?.stats} />
 
-            <div className="w-full flex flex-row gap-2 items-start">
+            <div className="w-full flex flex-row gap-4 items-start">
                 <div className="w-1/2">
                     <RecentBlocks blocks={status?.recentBlocks ?? []} />
                 </div>
