@@ -1,6 +1,7 @@
 "use client";
 
 import { RecentBlock } from "@/app/hooks/useStatsWebSocket";
+import CopyToClipboard from "./CopyToClipboard";
 
 export default function RecentBlock({ block }: { block: RecentBlock }) {
 
@@ -18,9 +19,14 @@ export default function RecentBlock({ block }: { block: RecentBlock }) {
     return (
         <li className="flex flex-row gap-1 items-center justify-between border border-gray-700 rounded-md px-2 py-2 w-full">
             <dl className="flex flex-row gap-2 items-center justify-between w-full">
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1">
                     <dt className="text-mono text-[11px] font-medium text-gray-500 w-fit border border-gray-500 rounded-md px-1 py-0.5">#{block.height.toLocaleString()}</dt>
-                    <dd className="font-mono text-xs">{hash}</dd>
+                    <dd className="font-mono text-xs">
+                        <span className="mr-1">{hash}</span>
+                        <span>
+                            <CopyToClipboard text={block.hash} />
+                        </span>
+                    </dd>
                 </div>
                 <div className="flex flex-col gap-2 items-end justify-end">
                     <dd className="text-mono text-xs">{diffSec.toFixed(0)} seconds ago</dd>
