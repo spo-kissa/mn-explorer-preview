@@ -45,7 +45,7 @@ export default function IconCard({ icon, title, value }: IconCardProps) {
                     ${glowing ? "icon-card-glowing" : ""}`}
                 onAnimationEnd={handleAnimationEnd}
             >
-                <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-gray-100 rounded-md object-contain ml-1" />
+                <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-transparent rounded-md object-contain ml-1 dark:invert" />
                 <div className="flex flex-col w-full items-start justify-start mt-1 ml-2">
                     <span className="flex items-center justify-center text-xs font-medium">{title}</span>
                     <span className="flex items-center justify-end w-full text-xl font-bold text-right font-mono pr-1">{value}</span>
