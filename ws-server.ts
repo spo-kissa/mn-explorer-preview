@@ -1,58 +1,95 @@
 // Bun ネイティブの WebSocket サーバ
 
 import GetStats from "./lib/db/GetStats";
+import GetRecentBlocks from "./lib/db/GetRecentBlocks";
+import GetRecentTransactions from "./lib/db/GetRecentTransactions";
 
-type Stats = {
+interface RecentBlock {
+    height: number;
+    hash: string;
+    timestamp: number;
+    txsCount: number;
+}
+
+interface RecentTransaction {
+    hash: string;
+    timestamp: number;
+    status: string;
+    block_height: number;
+    index_in_block: number;
+}
+
+interface Stats {
     latestBlockHeight: number;
     indexedBlocks: number;
     totalTransactions: number;
     totalContracts: number;
-};
+}
 
-type StatsMessage = {
+interface StatusMessage {
     type: "stats.snapshot";
     timestamp: number;
     stats: Stats;
-};
+    recentBlocks: RecentBlock[];
+    recentTransactions: RecentTransaction[];
+}
 
-type WSData = string | ArrayBuffer | Uint8Array;
+interface WSData {
+    type: string;
+    data: unknown;
+}
 
 const WS_PATH = "/api/v1/ws";
 
 // 接続中クライアントを管理
 const clients = new Set<ServerWebSocket<unknown>>();
 
+
 // 最新の統計情報を取得
-async function fetchLatestStats(): Promise<Stats> {
-    const { latestBlockHeight, indexedBlocks, totalTransactions, totalContracts } = await GetStats();
+async function fetchLatestStatus(): Promise<StatusMessage> {
+    const stats = await GetStats();
+    const recentBlocks = await GetRecentBlocks(10);
+    const recentTransactions = await GetRecentTransactions(10);
+
     return {
-        latestBlockHeight: Number(latestBlockHeight),
-        indexedBlocks: Number(indexedBlocks),
-        totalTransactions: Number(totalTransactions),
-        totalContracts: Number(totalContracts),
+        type: "status.snapshot",
+        timestamp: Date.now(),
+        stats: stats,
+        recentBlocks: recentBlocks,
+        recentTransactions: recentTransactions,
     };
 }
 
 
-async function broadcastStats() {
+async function broadcastStatus() {
     if (clients.size === 0) return;
 
-    const stats = await fetchLatestStats();
-
-    const msg: StatsMessage = {
-        type: "stats.snapshot",
-        timestamp: Date.now(),
-        stats,
-    };
-
-    const payload = JSON.stringify(msg);
+    const status = await fetchLatestStatus();
+    
+    //const payload = JSON.stringify(status);
 
     for (const ws of clients) {
         try {
-            ws.send(payload);
+            sendStatus(ws, status);
+            //  ws.send(payload);
         } catch (e) {
-            console.error("[WS] send error", e);
+            console.error("[WS] send error", e.message);
         }
+    }
+}
+
+async function sendStatus(ws: ServerWebSocket<unknown>, status: StatusMessage | null = null) {
+    try {
+        if (!status) {
+            status = await fetchLatestStatus();
+        }
+        
+        const payload = JSON.stringify(status);
+
+        ws.send(payload);
+
+    } catch (e) {
+        console.error("[WS] send status error", e.message);
     }
 }
 
@@ -85,21 +122,17 @@ const server = Bun.serve({
         // クライアント接続時
         open(ws) {
             console.log("[WS] Client connected");
-            // ws.send("Welcome to the WebSocket server!");
             clients.add(ws);
 
-            fetchLatestStats()
-                .then((stats) => {
-                    const msg: StatsMessage = {
-                        type: "stats.snapshot",
-                        timestamp: Date.now(),
-                        stats,
-                    };
-                    const payload = JSON.stringify(msg);
-                    ws.send(payload);
+            sendStatus(ws);
+            // ws.send("Welcome to the WebSocket server!");
+
+            fetchLatestStatus()
+                .then((status) => {
+                    sendStatus(ws, status);
                 })
                 .catch((e) => {
-                    console.error("[WS] initial stats error", e);
+                    console.error("[WS] initial status error", e);
                 });
         },
 
@@ -131,8 +164,8 @@ const server = Bun.serve({
 });
 
 setInterval(() => {
-    broadcastStats().catch((e) =>
-        console.error("[WS] broadcast stats error", e)
+    broadcastStatus().catch((e) =>
+        console.error("[WS] broadcast status error", e)
     );
 }, 1000);
 
@@ -143,13 +176,13 @@ console.log(
 
 process.on("SIGINT", () => {
     console.log("[WS] SIGINT signal received. Shutting down...");
-    server.close();
+    server.stop();
     process.exit(0);
 });
 
 process.on("SIGTERM", () => {
     console.log("[WS] SIGTERM signal received. Shutting down...");
-    server.close();
+    server.stop();
     process.exit(0);
 });
 

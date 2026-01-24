@@ -26,9 +26,9 @@ export default async function GetStats(): Promise<Stats> {
     const totalContracts = await prisma.tx_contract_actions.count();
 
     return {
-        latestBlockHeight: latestBlock?.height ?? 0,
-        indexedBlocks,
-        totalTransactions,
-        totalContracts,
+        latestBlockHeight: Number(latestBlock?.height ?? 0),
+        indexedBlocks: Number(indexedBlocks),
+        totalTransactions: Number(totalTransactions),
+        totalContracts: Number(totalContracts),
     };
 }

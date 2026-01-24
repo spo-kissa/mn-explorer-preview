@@ -2,29 +2,46 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export type Stats = {
+export interface RecentBlock {
+    height: number;
+    hash: string;
+    timestamp: number;
+    txsCount: number;
+}
+
+export interface RecentTransaction {
+    hash: string;
+    timestamp: number;
+    status: string;
+    block_height: number;
+    index_in_block: number;
+}
+
+export interface Stats {
     latestBlockHeight: number;
     indexedBlocks: number;
     totalTransactions: number;
     totalContracts: number;
-};
+}
 
-export type StatsMessage = {
-    type: "stats.snapshot";
+export interface StatusMessage {
+    type: "status.snapshot";
     timestamp: number;
     stats: Stats;
-};
+    recentBlocks: RecentBlock[];
+    recentTransactions: RecentTransaction[];
+}
 
-type UseStatsWebSocketOptions = {
+interface UseStatsWebSocketOptions {
     url?: string;
     historySeconds?: number;
 }
 
-export function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
+export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
     const { url, historySeconds = 60 } = options;
 
-    const [latest, setLatest] = useState<StatsMessage | null>(null);
-
+    const [status, setStatus] = useState<StatusMessage | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef<WebSocket | null>(null);
 
     useEffect(() => {
@@ -40,18 +57,19 @@ export function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
 
         socket.onopen = () => {
             console.log("[StatsWS] connected", wsUrl);
+            setIsConnected(true);
         };
 
         socket.onmessage = (event) => {
             try {
-                const data = JSON.parse(String(event.data)) as StatsMessage;
+                const data = JSON.parse(String(event.data)) as StatusMessage;
 
-                if (data.type !== "stats.snapshot") {
+                if (data.type !== "status.snapshot") {
                     console.warn("[StatsWS] unknown message type", data);
                     return;
                 }
 
-                setLatest(data);
+                setStatus(data);
             } catch (e) {
                 console.error("[StatsWS] parse error", e, event.data);
             }
@@ -59,6 +77,7 @@ export function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
 
         socket.onclose = (event) => {
             console.log("[StatsWS] closed", event.code, event.reason);
+            setIsConnected(false);
             socketRef.current = null;
         };
 
@@ -75,6 +94,7 @@ export function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
     }, [url, historySeconds]);
 
     return {
-        latest,
+        status,
+        isConnected,
     };
 }

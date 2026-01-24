@@ -1,8 +1,8 @@
-@import "tailwindcss";
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --site-bg: #ffffff;
+  --stars-bg: none;
 }
 
 @theme inline {
@@ -14,20 +14,167 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #020617;
     --foreground: #ededed;
+    /* 星空背景（ダークモード時） */
+    --site-bg:
+      radial-gradient(1200px 600px at 20% -10%, rgba(56, 189, 248, 0.10), transparent 62%),
+      radial-gradient(900px 500px at 90% 10%, rgba(168, 85, 247, 0.08), transparent 65%),
+      radial-gradient(800px 500px at 50% 110%, rgba(14, 165, 233, 0.06), transparent 58%),
+      radial-gradient(ellipse at bottom, #06081a 0%, #00020a 55%, #000000 100%);
+
+    /* 星（流れるレイヤー。repeat で敷き詰める） */
+    --stars-bg:
+      radial-gradient(1px 1px at 12% 18%, rgba(255, 255, 255, 0.55) 50%, transparent 51%),
+      radial-gradient(1px 1px at 27% 64%, rgba(255, 255, 255, 0.40) 50%, transparent 51%),
+      radial-gradient(2px 2px at 33% 28%, rgba(255, 255, 255, 0.22) 50%, transparent 51%),
+      radial-gradient(1px 1px at 41% 82%, rgba(255, 255, 255, 0.35) 50%, transparent 51%),
+      radial-gradient(1px 1px at 58% 22%, rgba(255, 255, 255, 0.30) 50%, transparent 51%),
+      radial-gradient(1px 1px at 71% 57%, rgba(255, 255, 255, 0.46) 50%, transparent 51%),
+      radial-gradient(2px 2px at 86% 34%, rgba(255, 255, 255, 0.18) 50%, transparent 51%),
+      radial-gradient(1px 1px at 93% 78%, rgba(255, 255, 255, 0.28) 50%, transparent 51%),
+      radial-gradient(1px 1px at 6% 72%, rgba(255, 255, 255, 0.33) 50%, transparent 51%),
+      radial-gradient(2px 2px at 18% 43%, rgba(255, 255, 255, 0.16) 50%, transparent 51%),
+      radial-gradient(1px 1px at 24% 9%, rgba(255, 255, 255, 0.38) 50%, transparent 51%),
+      radial-gradient(1px 1px at 39% 52%, rgba(255, 255, 255, 0.26) 50%, transparent 51%),
+      radial-gradient(2px 2px at 49% 15%, rgba(255, 255, 255, 0.14) 50%, transparent 51%),
+      radial-gradient(1px 1px at 52% 68%, rgba(255, 255, 255, 0.31) 50%, transparent 51%),
+      radial-gradient(1px 1px at 63% 90%, rgba(255, 255, 255, 0.24) 50%, transparent 51%),
+      radial-gradient(2px 2px at 69% 12%, rgba(255, 255, 255, 0.12) 50%, transparent 51%),
+      radial-gradient(1px 1px at 77% 41%, rgba(255, 255, 255, 0.29) 50%, transparent 51%),
+      radial-gradient(1px 1px at 82% 73%, rgba(255, 255, 255, 0.34) 50%, transparent 51%),
+      radial-gradient(2px 2px at 90% 6%, rgba(255, 255, 255, 0.10) 50%, transparent 51%),
+      radial-gradient(1px 1px at 96% 49%, rgba(255, 255, 255, 0.23) 50%, transparent 51%),
+      /* 大きめの星（アクセント） */
+      radial-gradient(3px 3px at 15% 35%, rgba(255, 255, 255, 0.22) 50%, transparent 55%),
+      radial-gradient(4px 4px at 74% 26%, rgba(255, 255, 255, 0.16) 50%, transparent 58%),
+      radial-gradient(3px 3px at 48% 48%, rgba(255, 255, 255, 0.18) 50%, transparent 56%),
+      radial-gradient(4px 4px at 9% 52%, rgba(255, 255, 255, 0.14) 50%, transparent 60%),
+      radial-gradient(3px 3px at 88% 66%, rgba(255, 255, 255, 0.15) 50%, transparent 57%),
+      radial-gradient(5px 5px at 62% 8%, rgba(255, 255, 255, 0.10) 50%, transparent 62%);
   }
 }
 
 html {
   height: 100%;
+  background: var(--site-bg);
+  background-attachment: fixed;
 }
 
 body {
   height: 100%;
-  background: var(--background);
+  background-color: transparent;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes star-drift {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 180px 120px;
+  }
+  100% {
+    background-position: 360px 240px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: var(--stars-bg);
+    background-repeat: repeat;
+    background-size: 320px 320px;
+    animation: star-drift 160s linear infinite;
+  }
+}
+
+@keyframes shooting-star {
+  /* ほとんどの時間は見えない（＝極たまにだけ出る） */
+  0% {
+    opacity: 0;
+    transform: translate3d(120vw, -20vh, 0) rotate(-25deg);
+  }
+  1.6% {
+    opacity: 0;
+    transform: translate3d(120vw, -20vh, 0) rotate(-25deg);
+  }
+  2% {
+    opacity: 1;
+    transform: translate3d(70vw, 10vh, 0) rotate(-25deg);
+  }
+  2.6% {
+    opacity: 0;
+    transform: translate3d(-30vw, 80vh, 0) rotate(-25deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-30vw, 80vh, 0) rotate(-25deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    position: relative;
+  }
+
+  /* 2本走らせて、たまにどちらかが流れる感じにする */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 2px;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0;
+    /* 線＋尾（先端を明るく、後ろを薄く） */
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.10) 35%,
+      rgba(255, 255, 255, 0.55) 70%,
+      rgba(255, 255, 255, 0.0) 100%
+    );
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
+    transform-origin: left center;
+    animation-name: shooting-star;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  body::before {
+    animation-duration: 95s;
+    animation-delay: 12s;
+  }
+
+  body::after {
+    width: 280px;
+    height: 2px;
+    opacity: 0;
+    filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.22));
+    animation-duration: 140s;
+    animation-delay: 55s;
+  }
+
+  /* 本文は流れ星レイヤーより前面に */
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none !important;
+  }
+
+  body::before,
+  body::after {
+    animation: none !important;
+  }
 }
 
 
