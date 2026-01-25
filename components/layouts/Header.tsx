@@ -16,7 +16,7 @@ export default function Header() {
                 <SearchBox />
             </div>
             <div className="flex flex-justify-end">
-                <span className="text-medium">Blocks</span>&nbsp;/&nbsp;
+                <span className="text-medium"><Link href="/block">Blocks</Link></span>&nbsp;/&nbsp;
                 <span className="text-medium">Transactions</span>&nbsp;/&nbsp;
                 <span className="text-medium">Contracts</span>&nbsp;/&nbsp;
                 <span className="text-medium">Addresses</span>
