@@ -1,5 +1,18 @@
 import prisma from "@/lib/db";
+import GetTransactionInputByTxId, { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
 
+/**
+ * Transaction Identifier
+ */
+export interface TransactionIdentifier {
+    tx_hash: string;
+    index_in_block: number;
+    identifier: string;
+}
+
+/**
+ * Transaction
+ */
 export interface Transaction {
     id: number;
     hash: string;
@@ -19,13 +32,15 @@ export interface Transaction {
     unshielded_total_input: number;
     unshielded_total_output: number;
     block_ledger_parameters: string;
+    identifiers: TransactionIdentifier[];
+    transaction_inputs: TransactionInput[];
 }
 
-export default async function GetTransactionsByBlockHash(blockHash: string)
-: Promise<Transaction[] | null> {
+export default async function GetTransactionByHash(hash: string)
+: Promise<Transaction | null> {
 
-    const transactions: Transaction[] = await prisma.transactions.findMany({
-        where: { block_hash: blockHash },
+    const transaction: Transaction = await prisma.transactions.findUnique({
+        where: { hash: hash},
         select: {
             id: true,
             hash: true,
@@ -48,28 +63,56 @@ export default async function GetTransactionsByBlockHash(blockHash: string)
         }
     });
 
-    if (!transactions) {
+    if (!transaction) {
         return null;
     }
 
-    return transactions.map((tx) => ({
+    let identifiers: TransactionIdentifier[] = await prisma.tx_identifiers.findMany({
+        where: { tx_id: transaction.id },
+        select: {
+            tx_hash: true,
+            index_in_tx: true,
+            identifier: true
+        },
+        orderBy: {
+            index_in_tx: "asc"
+        }
+    });
+
+    if (!identifiers) {
+        identifiers = [];
+    }
+
+    const tx = transaction;
+
+    const txInputs: TransactionInput[] = await GetTransactionInputByTxId(tx.id);
+
+    return {
         id: Number(tx.id),
-        hash: tx.hash,
+        hash: '0x' + tx.hash,
         index_in_block: Number(tx.index_in_block),
         timestamp: tx.timestamp.getTime(),
         is_shielded: tx.is_shielded,
         total_input: Number(tx.total_input),
         total_output: Number(tx.total_output),
         status: tx.status,
-        raw: tx.raw,
         block_height: Number(tx.block_height),
-        block_hash: tx.block_hash,
+        block_hash: '0x' + tx.block_hash,
         protocol_version: Number(tx.protocol_version),
         transaction_id: Number(tx.transaction_id),
         start_index: Number(tx.start_index),
         end_index: Number(tx.end_index),
         unshielded_total_input: Number(tx.unshielded_total_input),
         unshielded_total_output: Number(tx.unshielded_total_output),
+        identifiers: identifiers.map((id) => {
+            return {
+                tx_hash: id.tx_hash,
+                index_in_block: Number(id.index_in_block),
+                identifier: id.identifier
+            };
+        }),
+        transaction_inputs: txInputs,
+        raw: tx.raw,
         block_ledger_parameters: tx.block_ledger_parameters,
-    }));
+    };
 }
