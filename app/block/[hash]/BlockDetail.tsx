@@ -191,7 +191,7 @@ export default function BlockDetail({
                                 onClick={() => setIsLedgerParamsExpanded(!isLedgerParamsExpanded)}
                                 className="w-full text-lg font-bold block mb-1 bg-gray-100 dark:bg-gray-800 py-2 px-4 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded-t-lg"
                             >
-                                <span>Ledger Parameters ({block.ledger_parameters.length.toLocaleString()} bytes)</span>
+                                <span>Ledger Parameters ({block.ledger_parameters ? block.ledger_parameters.length.toLocaleString() : "0"} bytes)</span>
                                 <span className="text-sm">{isLedgerParamsExpanded ? "▼" : "▶"}</span>
                             </button>
                             {isLedgerParamsExpanded && (
