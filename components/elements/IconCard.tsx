@@ -2,14 +2,16 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface IconCardProps {
     icon?: string;
     title: string;
     value?: string;
+    href?: string;
 }
 
-export default function IconCard({ icon, title, value }: IconCardProps) {
+export default function IconCard({ icon, title, value, href }: IconCardProps) {
     const prevValueRef = useRef<string | undefined>(value);
     const [glowing, setGlowing] = useState(false);
 
@@ -36,21 +38,32 @@ export default function IconCard({ icon, title, value }: IconCardProps) {
         icon = defaultIconDataUri;
     }
 
+    const cardContent = (
+        <div
+            className={`flex flex-row items-center justify-center w-full rounded-md overflow-visible
+                border-[1px] border-gray-300 dark:border-zinc-700 p-2
+                bg-white dark:bg-zinc-900/50
+                ${href ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors" : ""}
+                ${glowing ? "icon-card-glowing" : ""}`}
+            onAnimationEnd={handleAnimationEnd}
+        >
+            <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-transparent rounded-md object-contain ml-1 dark:invert" />
+            <div className="flex flex-col w-full items-start justify-start mt-1 ml-2">
+                <span className="flex items-center justify-center text-xs font-medium">{title}</span>
+                <span className="flex items-center justify-end w-full text-xl font-bold text-right font-mono pr-1">{value}</span>
+            </div>
+        </div>
+    );
+
     return (
         <div className="flex flex-row items-center w-full justify-center rounded-md overflow-visible">
-            <div
-                className={`flex flex-row items-center justify-center w-full rounded-md overflow-visible
-                    border-[1px] border-gray-300 dark:border-zinc-700 p-2
-                    bg-white dark:bg-zinc-900/50
-                    ${glowing ? "icon-card-glowing" : ""}`}
-                onAnimationEnd={handleAnimationEnd}
-            >
-                <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-transparent rounded-md object-contain ml-1 dark:invert" />
-                <div className="flex flex-col w-full items-start justify-start mt-1 ml-2">
-                    <span className="flex items-center justify-center text-xs font-medium">{title}</span>
-                    <span className="flex items-center justify-end w-full text-xl font-bold text-right font-mono pr-1">{value}</span>
-                </div>
-            </div>
+            {href ? (
+                <Link href={href} className="w-full">
+                    {cardContent}
+                </Link>
+            ) : (
+                cardContent
+            )}
         </div>
     );
 }

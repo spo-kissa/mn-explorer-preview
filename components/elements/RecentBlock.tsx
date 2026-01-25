@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { RecentBlock } from "@/app/hooks/useStatsWebSocket";
 import CopyToClipboard from "./CopyToClipboard";
 
@@ -17,22 +18,24 @@ export default function RecentBlock({ block }: { block: RecentBlock }) {
     const hash = block.hash.slice(0, 14) + "..." + block.hash.slice(-10);
 
     return (
-        <li className="flex flex-row gap-1 items-center justify-between border border-gray-700 rounded-md px-2 py-2 w-full">
-            <dl className="flex flex-row gap-2 items-center justify-between w-full">
-                <div className="flex flex-col gap-1">
-                    <dt className="text-mono text-[11px] font-medium text-gray-500 w-fit border border-gray-500 rounded-md px-1 py-0.5">#{block.height.toLocaleString()}</dt>
-                    <dd className="font-mono text-xs">
-                        <span className="mr-1">{hash}</span>
-                        <span>
-                            <CopyToClipboard text={block.hash} />
-                        </span>
-                    </dd>
-                </div>
-                <div className="flex flex-col gap-2 items-end justify-end">
-                    <dd className="text-mono text-xs">{diffSec.toFixed(0)} seconds ago</dd>
-                    <dd className="text-mono text-xs">{block.txsCount} txs</dd>
-                </div>
-            </dl>
-        </li>
+        <Link href={`/block/${block.hash}`} className="flex flex-row gap-2 items-center justify-between border border-gray-700 rounded-md px-2 py-2 w-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors">
+            <li className="flex flex-row gap-1 items-center justify-between w-full">
+                <dl className="flex flex-row gap-2 items-center justify-between w-full">
+                    <div className="flex flex-col gap-1">
+                        <dt className="text-mono text-[11px] font-medium text-gray-500 w-fit border border-gray-500 rounded-md px-1 py-0.5">#{block.height.toLocaleString()}</dt>
+                        <dd className="font-mono text-xs">
+                            <span className="mr-1">{hash}</span>
+                            <span>
+                                <CopyToClipboard text={block.hash} />
+                            </span>
+                        </dd>
+                    </div>
+                    <div className="flex flex-col gap-2 items-end justify-end">
+                        <dd className="text-mono text-xs">{diffSec.toFixed(0)} seconds ago</dd>
+                        <dd className="text-mono text-xs">{block.txsCount} txs</dd>
+                    </div>
+                </dl>
+            </li>
+        </Link>
     );
 }
