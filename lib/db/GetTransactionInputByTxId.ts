@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { hashToPrefix, tokenTypeToName } from "@/lib/converter";
 
 /**
  * Transaction Input
@@ -16,6 +17,7 @@ export interface TransactionInput {
     ctime: number;
     registered_for_dust_generation: boolean;
     token_type: string;
+    token_type_name: string;
     spent_at_transaction_id: number;
     spent_at_transaction_index: number;
     account_addr: string;
@@ -60,23 +62,25 @@ export default async function GetTransactionInputByTxId(txId: number)
     }
 
     return inputs.map((input) => {
-        index: Number(input.index);
-        prev_tx_hash: input.prev_tx_hash;
-        prev_tx_output_tx: Number(input.prev_tx_output_tx);
-        prev_output_id: Number(input.prev_output_id);
-        address_id: Number(input.address_id);
-        create_at_tx_hash: input.create_at_tx_hash;
-        spent_at_tx_hash: input.spent_at_tx_hash;
-        intent_hash: input.intent_hash;
-        ctime: Number(input.ctime);
-        registered_for_dust_generation: input.registered_for_dust_generation;
-        token_type: input.token_type;
-        spent_at_transaction_id: Number(input.spent_at_transaction_id);
-        spent_at_transaction_hash: input.spent_at_transaction_hash;
-        account_addr: input.account_addr;
-        value: Number(input.value);
-        shielded: input.shielded;
-        initial_nonce: input.initial_nonce;
-        raw: input.raw;
+        return {
+            index: Number(input.index) + 1,
+            prev_tx_hash: hashToPrefix(input.prev_tx_hash),
+            prev_tx_output_tx: Number(input.prev_tx_output_tx),
+            prev_output_id: Number(input.prev_output_id),
+            address_id: Number(input.address_id),
+            create_at_tx_hash: hashToPrefix(input.create_at_tx_hash),
+            spent_at_tx_hash: hashToPrefix(input.spent_at_tx_hash),
+            intent_hash: hashToPrefix(input.intent_hash),
+            ctime: Number(input.ctime),
+            registered_for_dust_generation: input.registered_for_dust_generation,
+            token_type: input.token_type,
+            spent_at_transaction_id: Number(input.spent_at_transaction_id),
+            spent_at_transaction_hash: hashToPrefix(input.spent_at_transaction_hash),
+            account_addr: input.account_addr,
+            value: Number(input.value),
+            shielded: input.shielded,
+            initial_nonce: input.initial_nonce,
+            raw: input.raw,
+        }
     });
 }

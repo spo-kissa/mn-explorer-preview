@@ -85,7 +85,17 @@ export default async function GetTransactionByHash(hash: string)
 
     const tx = transaction;
 
-    const txInputs: TransactionInput[] = await GetTransactionInputByTxId(tx.id);
+    const txIdentifiers = identifiers.map((id) => {
+        return {
+            tx_hash: '0x' + id.tx_hash,
+            index_in_tx: Number(id.index_in_tx) + 1,
+            identifier: id.identifier
+        };
+    });
+
+    const txInputs = await GetTransactionInputByTxId(tx.id);
+
+    console.log(txInputs);
 
     return {
         id: Number(tx.id),
@@ -104,13 +114,7 @@ export default async function GetTransactionByHash(hash: string)
         end_index: Number(tx.end_index),
         unshielded_total_input: Number(tx.unshielded_total_input),
         unshielded_total_output: Number(tx.unshielded_total_output),
-        identifiers: identifiers.map((id) => {
-            return {
-                tx_hash: id.tx_hash,
-                index_in_block: Number(id.index_in_block),
-                identifier: id.identifier
-            };
-        }),
+        identifiers: txIdentifiers,
         transaction_inputs: txInputs,
         raw: tx.raw,
         block_ledger_parameters: tx.block_ledger_parameters,
