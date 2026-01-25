@@ -1,7 +1,7 @@
 "use client";
 
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 
@@ -11,6 +11,8 @@ export default function BlockDetail({
     hash: string 
 }) {
     const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
+    const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
+    const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
 
     const prepareValue = (value: any): any => {
         if (value === null || value === undefined) {
@@ -97,6 +99,7 @@ export default function BlockDetail({
         return (
             <div className="max-w-7xlspace-y-4">
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+
                     <h2 className="text-2xl font-bold mb-4 ml-2">Summary</h2>
 
                     <div className="flex flex-row gap-2 mb-2 w-full">
@@ -115,12 +118,13 @@ export default function BlockDetail({
                     </div>
                 </div>
 
-                <div className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+
                     <h2 className="text-2xl font-bold mb-4 ml-2">Block Information</h2>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Block Hash</label>
-                        <p className="basis-2/3 font-mono text-right">
+                        <p className="basis-2/3 font-mono text-sm text-right">
                             {block.hash}
                             <CopyToClipboard text={block.hash} />
                         </p>
@@ -128,7 +132,7 @@ export default function BlockDetail({
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
-                        <p className="basis-2/3 font-mono text-right">
+                        <p className="basis-2/3 font-mono text-sm text-right">
                             {block.parent_hash}
                             <CopyToClipboard text={block.parent_hash} />
                         </p>
@@ -136,7 +140,7 @@ export default function BlockDetail({
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Author</label>
-                        <p className="basis-2/3 font-mono text-right">
+                        <p className="basis-2/3 font-mono text-sm text-right">
                             0x{block.author}
                             <CopyToClipboard text={"0x" + block.author} />
                         </p>
@@ -144,7 +148,7 @@ export default function BlockDetail({
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">State Root</label>
-                        <p className="basis-2/3 font-mono text-right">
+                        <p className="basis-2/3 font-mono text-sm text-right">
                             0x{block.state_root}
                             <CopyToClipboard text={"0x" + block.state_root} />
                         </p>
@@ -162,27 +166,54 @@ export default function BlockDetail({
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Finalized</label>
-                        <p className="basis-2/3 text-right">{block.is_finalized ? "True" : "False"}</p>
+                        <p className={`basis-2/3 text-right ${block.is_finalized ? "text-green-500" : "text-red-500"}`}>{block.is_finalized ? "TRUE" : "FALSE"}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Transaction Count</label>
                         <p className="basis-2/3 text-right">{block.tx_count}</p>
                     </div>
+                </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+                    <h2 className="text-2xl font-bold mb-4 ml-2">Transactions ({block.tx_count.toString()})</h2>
+
+                    <div className="flex flex-row justify-center gap-2 mb-4 w-full px-4 text-center">
+                        No transactions found this block.
+                    </div>
+                </div>
+
+                <div className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+
+                    <div className="flex flex-row gap-2 mt-4 mb-4 w-full px-4">
                         <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
-                            <label className="text-lg font-bold block mb-2 bg-gray-100 dark:bg-gray-800 py-2 px-4">Ledger Parameters</label>
-                            <p className="break-all text-xs font-mono p-4">{block.ledger_parameters}</p>
+                            <button
+                                onClick={() => setIsLedgerParamsExpanded(!isLedgerParamsExpanded)}
+                                className="w-full text-lg font-bold block mb-1 bg-gray-100 dark:bg-gray-800 py-2 px-4 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded-t-lg"
+                            >
+                                <span>Ledger Parameters ({block.ledger_parameters.length.toLocaleString()} bytes)</span>
+                                <span className="text-sm">{isLedgerParamsExpanded ? "▼" : "▶"}</span>
+                            </button>
+                            {isLedgerParamsExpanded && (
+                                <p className="break-all text-xs font-mono p-4">{block.ledger_parameters}</p>
+                            )}
                         </div>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
-                            <label className="text-lg font-bold block mb-2 bg-gray-100 dark:bg-gray-800 py-2 px-4">Raw Data</label>
-                            <div className="break-all text-xs font-mono p-4 overflow-x-auto">
-                                {formatValue(block.raw)}
-                            </div>
+                            <button
+                                onClick={() => setIsRawDataExpanded(!isRawDataExpanded)}
+                                className="w-full text-lg font-bold block mb-1 bg-gray-100 dark:bg-gray-800 py-2 px-4 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded-t-lg"
+                            >
+                                <span>Raw Data</span>
+                                <span className="text-sm">{isRawDataExpanded ? "▼" : "▶"}</span>
+                            </button>
+                            {isRawDataExpanded && (
+                                <div className="break-all text-xs font-mono p-4 overflow-x-auto">
+                                    {formatValue(block.raw)}
+                                </div>
+                            )}
                         </div>
                     </div>
 
