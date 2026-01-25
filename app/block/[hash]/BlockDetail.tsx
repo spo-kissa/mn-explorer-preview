@@ -2,6 +2,7 @@
 
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
 import { Suspense } from "react";
+import JsonViewer from "@/components/elements/JsonViewer";
 
 export default function BlockDetail({
     hash 
@@ -10,27 +11,41 @@ export default function BlockDetail({
 }) {
     const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
 
-    const formatValue = (value: any): string => {
+    const prepareValue = (value: any): any => {
+        if (value === null || value === undefined) {
+            return value;
+        }
+        if (typeof value === "object" && value.header) {
+            // header.digestとheader.headerをパースする
+            const prepared = { ...value };
+            if (prepared.header) {
+                if (typeof prepared.header.digest === "string") {
+                    try {
+                        prepared.header.digest = JSON.parse(prepared.header.digest);
+                    } catch (e) {
+                        // パースに失敗した場合はそのまま
+                    }
+                }
+                if (typeof prepared.header.header === "string") {
+                    try {
+                        prepared.header.header = JSON.parse(prepared.header.header);
+                    } catch (e) {
+                        // パースに失敗した場合はそのまま
+                    }
+                }
+            }
+            return prepared;
+        }
+        return value;
+    };
+
+    const formatValue = (value: any): React.ReactNode => {
         if (value === null || value === undefined) {
             return "N/A";
         }
         if (typeof value === "object") {
-            let digest = value.header.digest;
-            if (typeof digest === "string") {
-                digest = JSON.parse(digest);
-            }
-            value.header.digest = digest;
-            let header = value.header.header;
-            if (typeof header === "string") {
-                header = JSON.parse(header);
-            }
-            value.header.header = header;
-            const formatted = JSON.stringify(value, true, 2);
-            return (
-                <pre>
-                    {formatted}
-                </pre>
-            );
+            const prepared = prepareValue(value);
+            return <JsonViewer data={prepared} level={3} defaultExpanded={true} />;
         }
         return String(value);
     };
@@ -40,10 +55,10 @@ export default function BlockDetail({
         if (typeof value === "object" && value !== null) {
             return (
                 <div className="mb-4">
-                    <strong>{label}:</strong>
-                    <pre className="whitespace-pre-wrap break-words bg-gray-100 dark:bg-gray-800 p-2 rounded mt-1 text-sm overflow-x-auto">
+                    <strong className="block mb-2">{label}:</strong>
+                    <div className="whitespace-pre-wrap break-words bg-gray-100 dark:bg-gray-800 p-4 rounded mt-1 text-sm overflow-x-auto font-mono">
                         {formatted}
-                    </pre>
+                    </div>
                 </div>
             );
         }
@@ -148,11 +163,11 @@ export default function BlockDetail({
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis">
-                            <label className="text-lg font-bold">Raw</label>
-                            <p className="break-all text-xs font-mono">
+                        <div className="basis w-full">
+                            <label className="text-lg font-bold block mb-2">Raw Data</label>
+                            <div className="break-all text-xs font-mono p-4 rounded overflow-x-auto">
                                 {formatValue(block.raw)}
-                            </p>
+                            </div>
                         </div>
                     </div>
 
