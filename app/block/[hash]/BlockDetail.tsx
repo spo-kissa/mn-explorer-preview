@@ -95,9 +95,10 @@ export default function BlockDetail({
         
         return (
             <div className="max-w-7xlspace-y-4">
-                <div className="">
-                    <h2 className="text-xl font-bold mb-2">Summary</h2>
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+                    <h2 className="text-2xl font-bold mb-4 ml-2">Summary</h2>
+
+                    <div className="flex flex-row gap-2 mb-2 w-full">
                         <div className="basis-1/3">
                             <label className="text-lg font-bold block text-center">Block Height</label>
                             <p className="text-center">#{block.height.toLocaleString()}</p>
@@ -113,75 +114,66 @@ export default function BlockDetail({
                     </div>
                 </div>
 
-                <div className="">
-                    <h2 className="text-xl font-bold mb-2">Block Information</h2>
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                <div className="border border-gray-200 dark:border-gray-700 p-4 rounded-lg">
+                    <h2 className="text-2xl font-bold mb-4 ml-2">Block Information</h2>
+
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Block Hash</label>
                         <p className="basis-2/3 font-mono text-right">{block.hash}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
                         <p className="basis-2/3 font-mono text-right">{block.parent_hash}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Author</label>
                         <p className="basis-2/3 font-mono text-right">0x{block.author}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">State Root</label>
                         <p className="basis-2/3 font-mono text-right">0x{block.state_root}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Timestamp</label>
                         <p className="basis-2/3 text-right">{new Date(block.timestamp).toLocaleString()}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Protocol Version</label>
                         <p className="basis-2/3 text-right">v{block.protocol_version}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Finalized</label>
                         <p className="basis-2/3 text-right">{block.is_finalized ? "True" : "False"}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Transaction Count</label>
                         <p className="basis-2/3 text-right">{block.tx_count}</p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis">
-                            <label className="text-lg font-bold">Ledger Parameters</label>
-                            <p className="break-all text-xs font-mono">{block.ledger_parameters}</p>
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                        <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <label className="text-lg font-bold block mb-2 bg-gray-100 dark:bg-gray-800 py-2 px-4">Ledger Parameters</label>
+                            <p className="break-all text-xs font-mono p-4">{block.ledger_parameters}</p>
                         </div>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis w-full">
-                            <label className="text-lg font-bold block mb-2">Raw Data</label>
-                            <div className="break-all text-xs font-mono p-4 rounded overflow-x-auto">
+                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                        <div className="w-full border border-gray-200 dark:border-gray-700 rounded-lg">
+                            <label className="text-lg font-bold block mb-2 bg-gray-100 dark:bg-gray-800 py-2 px-4">Raw Data</label>
+                            <div className="break-all text-xs font-mono p-4 overflow-x-auto">
                                 {formatValue(block.raw)}
                             </div>
                         </div>
                     </div>
 
                 </div>
-
-                {blockAny.blockNumber !== undefined && renderField("Block Number", blockAny.blockNumber)}
-                {blockAny.slot !== undefined && renderField("Slot", blockAny.slot)}
-                {blockAny.extrinsicsCount !== undefined && renderField("Extrinsics Count", blockAny.extrinsicsCount)}
-                {blockAny.eventsCount !== undefined && renderField("Events Count", blockAny.eventsCount)}
-                {blockAny.isEmpty !== undefined && renderField("Is Empty", blockAny.isEmpty ? "Yes" : "No")}
-                {blockAny.encodedLength !== undefined && renderField("Encoded Length", blockAny.encodedLength)}
-                {blockAny.header !== undefined && renderField("Header", blockAny.header)}
-                {blockAny.events !== undefined && renderField("Events", blockAny.events)}
-                {blockAny.justifications !== undefined && renderField("Justifications", blockAny.justifications)}
             </div>
         );
     }
