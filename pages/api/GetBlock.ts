@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             res.status(404).json({ error: "Block not found" });
             return;
         }
+        
         res.status(200).json(block);
         return;
     }

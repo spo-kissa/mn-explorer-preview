@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 
-interface Block {
+export interface Block {
     height: number;
     hash: string;
     parent_hash: string;

@@ -1,9 +1,11 @@
 "use client";
 
-import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
 import { Suspense, useState } from "react";
 import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
+import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
+import useGetTransactionsByBlockHash, { UseGetTransactionsByBlockHashResult } from "@/app/hooks/useGetTransactionsByBlockHash";
+import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
 
 export default function BlockDetail({
     hash 
@@ -11,6 +13,7 @@ export default function BlockDetail({
     hash: string 
 }) {
     const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
+    const { transactions, isLoading: isTransactionsLoading, error: transactionsError, refetch: refetchTransactions } = useGetTransactionsByBlockHash(hash);
     const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
     const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
 
@@ -83,14 +86,21 @@ export default function BlockDetail({
     };
 
     const content = () => {
-        if (isLoading) {
+        if (isLoading || isTransactionsLoading) {
             return <div>Loading...</div>;
         }
         if (error) {
             return <div>Error: {error}</div>;
         }
+        if (transactionsError) {
+            return <div>Error: {transactionsError}</div>;
+        }
         if (!block) {
             return <div>Block not found</div>;
+        }
+        let txs = transactions;
+        if (!txs) {
+            txs = [];
         }
         
         // blockがオブジェクトの場合、すべてのフィールドを動的に表示
@@ -176,10 +186,48 @@ export default function BlockDetail({
                 </div>
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Transactions ({block.tx_count.toString()})</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        Transactions
+                        (<span className="font-mono">{txs.length.toString()}</span>)
+                    </h2>
 
                     <div className="flex flex-row justify-center gap-2 mb-4 w-full px-4 text-center">
-                        No transactions found this block.
+
+                        {txs.length === 0 && (
+                            <p>No transactions found this block.</p>
+                        )}
+
+                        {txs.length > 0 && (
+                            <ol className="w-full">
+                                <li className="p-2 border border-gray-200 dark:border-gray-700 rounded-t-lg">
+                                    <dl className="grid grid-cols-6 gap-1">
+                                        <dt className="col-span-1 font-bold">Index</dt>
+                                        <dd className="col-span-4 font-bold">Hash</dd>
+                                        <dd className="col-span-1 font-bold">Status</dd>
+                                    </dl>
+                                </li>
+                                {txs.map((tx) => (
+                                    <a href="/" key={tx.index_in_block.toString()}>
+                                        <li className="p-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                                            <dl className="grid grid-cols-6 gap-1 items-center">
+                                                <dt className="col-span-1 font-mono text-sm align-middle">
+                                                    <span className={`h-[32px] w-[32px] inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md ${tx.status === "SUCCESS" ? "bg-green-500" : "bg-red-500"} text-white`}>
+                                                        {(tx.index_in_block + 1).toString()}
+                                                    </span>
+                                                </dt>
+                                                <dd className="col-span-4 font-mono text-sm">
+                                                    0x{tx.hash}
+                                                    <span className="ml-2"><CopyToClipboard text={"0x" + tx.hash} /></span>
+                                                </dd>
+                                                <dd className={`col-span-1 font-mono text-sm ${tx.status === "SUCCESS" ? "text-green-500" : "text-red-500"}`}>
+                                                    {tx.status}
+                                                </dd>
+                                            </dl>
+                                        </li>
+                                    </a>
+                                ))}
+                            </ol>
+                        )}
                     </div>
                 </div>
 
