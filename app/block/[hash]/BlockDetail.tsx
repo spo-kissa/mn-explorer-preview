@@ -3,6 +3,7 @@
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
 import { Suspense } from "react";
 import JsonViewer from "@/components/elements/JsonViewer";
+import CopyToClipboard from "@/components/elements/CopyToClipboard";
 
 export default function BlockDetail({
     hash 
@@ -119,22 +120,34 @@ export default function BlockDetail({
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Block Hash</label>
-                        <p className="basis-2/3 font-mono text-right">{block.hash}</p>
+                        <p className="basis-2/3 font-mono text-right">
+                            {block.hash}
+                            <CopyToClipboard text={block.hash} />
+                        </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
-                        <p className="basis-2/3 font-mono text-right">{block.parent_hash}</p>
+                        <p className="basis-2/3 font-mono text-right">
+                            {block.parent_hash}
+                            <CopyToClipboard text={block.parent_hash} />
+                        </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Author</label>
-                        <p className="basis-2/3 font-mono text-right">0x{block.author}</p>
+                        <p className="basis-2/3 font-mono text-right">
+                            0x{block.author}
+                            <CopyToClipboard text={"0x" + block.author} />
+                        </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">State Root</label>
-                        <p className="basis-2/3 font-mono text-right">0x{block.state_root}</p>
+                        <p className="basis-2/3 font-mono text-right">
+                            0x{block.state_root}
+                            <CopyToClipboard text={"0x" + block.state_root} />
+                        </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
