@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import Link from "next/link";
 import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
@@ -207,7 +208,7 @@ export default function BlockDetail({
                                     </dl>
                                 </li>
                                 {txs.map((tx) => (
-                                    <a href="/" key={tx.index_in_block.toString()}>
+                                    <Link href={`/transaction/${tx.hash}`} key={tx.index_in_block.toString()}>
                                         <li className="p-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                                             <dl className="grid grid-cols-6 gap-1 items-center">
                                                 <dt className="col-span-1 font-mono text-sm align-middle">
@@ -224,7 +225,7 @@ export default function BlockDetail({
                                                 </dd>
                                             </dl>
                                         </li>
-                                    </a>
+                                    </Link>
                                 ))}
                             </ol>
                         )}
