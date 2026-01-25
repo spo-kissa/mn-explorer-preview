@@ -84,16 +84,16 @@ export default function BlockDetail({
                     <h2 className="text-xl font-bold mb-2">Summary</h2>
                     <div className="flex flex-row gap-2 mb-4 w-full">
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold">Block Height</label>
-                            <p>#{block.height}</p>
+                            <label className="text-lg font-bold block text-center">Block Height</label>
+                            <p className="text-center">#{block.height.toLocaleString()}</p>
                         </div>
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold">Timestamp</label>
-                            <p>{new Date(block.timestamp).toLocaleString()}</p>
+                            <label className="text-lg font-bold block text-center">Timestamp</label>
+                            <p className="text-center">{new Date(block.timestamp).toLocaleString()}</p>
                         </div>
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold">Transactions</label>
-                            <p>{block.tx_count} txs</p>
+                            <label className="text-lg font-bold block text-center">Transactions</label>
+                            <p className="text-center">{block.tx_count} txs</p>
                         </div>
                     </div>
                 </div>
@@ -101,59 +101,43 @@ export default function BlockDetail({
                 <div className="">
                     <h2 className="text-xl font-bold mb-2">Block Information</h2>
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Block Hash</label>
-                            <p className="font-mono">{block.hash}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Block Hash</label>
+                        <p className="basis-2/3 font-mono text-right">{block.hash}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Parent Hash</label>
-                            <p className="font-mono">{block.parent_hash}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
+                        <p className="basis-2/3 font-mono text-right">{block.parent_hash}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Author</label>
-                            <p className="font-mono">0x{block.author}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Author</label>
+                        <p className="basis-2/3 font-mono text-right">0x{block.author}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">State Root</label>
-                            <p className="font-mono">0x{block.state_root}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">State Root</label>
+                        <p className="basis-2/3 font-mono text-right">0x{block.state_root}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Timestamp</label>
-                            <p>{new Date(block.timestamp).toLocaleString()}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Timestamp</label>
+                        <p className="basis-2/3 text-right">{new Date(block.timestamp).toLocaleString()}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Protocol Version</label>
-                            <p>v{block.protocol_version}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Protocol Version</label>
+                        <p className="basis-2/3 text-right">v{block.protocol_version}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Finalized</label>
-                            <p>{block.is_finalized ? "True" : "False"}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Finalized</label>
+                        <p className="basis-2/3 text-right">{block.is_finalized ? "True" : "False"}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
-                        <div className="basis-2/3">
-                            <label className="text-lg font-bold">Transaction Count</label>
-                            <p>{block.tx_count}</p>
-                        </div>
+                        <label className="basis-1/3 text-lg font-bold">Transaction Count</label>
+                        <p className="basis-2/3 text-right">{block.tx_count}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full">
