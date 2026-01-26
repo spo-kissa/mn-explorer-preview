@@ -16,6 +16,11 @@ interface Block {
 }
 
 export default async function GetBlockByHash(hash: string): Promise<Block | null> {
+
+    if (hash.startsWith("0x")) {
+        hash = hash.slice(2);
+    }
+
     const block = await prisma.blocks.findUnique({
         where: { hash: hash },
         select: {

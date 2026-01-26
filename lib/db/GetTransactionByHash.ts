@@ -1,6 +1,7 @@
 import prisma from "@/lib/db";
 import GetTransactionInputByTxId, { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
 import GetTransactionOutputByTxId, { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
+import { normalizeTransaction } from "@/lib/transaction";
 
 /**
  * Transaction Identifier
@@ -35,6 +36,9 @@ export interface Transaction {
     block_ledger_parameters: string;
     identifiers: TransactionIdentifier[];
     transaction_inputs: TransactionInput[];
+    transaction_outputs: TransactionOutput[];
+    raw: string;
+    block_ledger_parameters: string;
 }
 
 export default async function GetTransactionByHash(hash: string)
@@ -97,27 +101,5 @@ export default async function GetTransactionByHash(hash: string)
     const txInputs = await GetTransactionInputByTxId(tx.id);
     const txOutputs = await GetTransactionOutputByTxId(tx.id);
 
-    return {
-        id: Number(tx.id),
-        hash: '0x' + tx.hash,
-        index_in_block: Number(tx.index_in_block),
-        timestamp: tx.timestamp.getTime(),
-        is_shielded: tx.is_shielded,
-        total_input: Number(tx.total_input),
-        total_output: Number(tx.total_output),
-        status: tx.status,
-        block_height: Number(tx.block_height),
-        block_hash: '0x' + tx.block_hash,
-        protocol_version: Number(tx.protocol_version),
-        transaction_id: Number(tx.transaction_id),
-        start_index: Number(tx.start_index),
-        end_index: Number(tx.end_index),
-        unshielded_total_input: Number(tx.unshielded_total_input),
-        unshielded_total_output: Number(tx.unshielded_total_output),
-        identifiers: txIdentifiers,
-        transaction_inputs: txInputs,
-        transaction_outputs: txOutputs,
-        raw: tx.raw,
-        block_ledger_parameters: tx.block_ledger_parameters,
-    };
+    return normalizeTransaction(tx, txIdentifiers, txInputs, txOutputs);
 }

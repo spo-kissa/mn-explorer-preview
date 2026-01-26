@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { Block } from "@/lib/db/GetBlockByHash";
+import { Transaction } from "@/lib/transaction";
 
 export interface SearchResult {
-    type: "block" | "transaction" | "error";
-    data?: any;
-    error?: string;
+    blocks: Block[];
+    transactions: Transaction[];
+    error: boolean;
 }
 
 export interface UseSearchResult {
@@ -63,6 +65,12 @@ export default function useSearch(): UseSearchResult {
 
             if (!response.ok) {
                 throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+
+            if (data.error) {
+                setError(data.error || "Failed to search");
+                setResult(null);
+                return;
             }
 
             setResult(data);
