@@ -8,11 +8,8 @@ import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app
 import useGetTransactionsByBlockHash, { UseGetTransactionsByBlockHashResult } from "@/app/hooks/useGetTransactionsByBlockHash";
 import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
 
-export default function BlockDetail({
-    hash 
-}: { 
-    hash: string 
-}) {
+export default function BlockDetail({ hash }: { hash: string }) {
+    
     const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
     const { transactions, isLoading: isTransactionsLoading, error: transactionsError, refetch: refetchTransactions } = useGetTransactionsByBlockHash(hash);
     const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
