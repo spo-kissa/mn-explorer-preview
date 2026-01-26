@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { formatLovelace } from "@/lib/lovelace";
 import { tokenTypeToName, TokenTypes } from "@/lib/converter";
+import Link from "next/link";
 import useGetTransactionByHash from "@/app/hooks/useGetTransactionByHash";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import TransactionIO from "@/components/elements/TransactionIO";
@@ -30,7 +31,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                     
                     <h2 className="text-2xl font-bold mb-4 ml-2">Summary</h2>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Transaction Hash
                         </label>
@@ -40,16 +41,30 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Block Hash
                         </label>
                         <p className="basis-2/3 font-mono text-right">
+                            <span className="mr-1">
+                                <Link href={`/block/${tx.block_hash}`} className="hover:opacity-80 transition-opacity">
+                                    {tx.block_hash}
+                                </Link>
+                            </span>
+                            <CopyToClipboard text={tx.block_hash} />
+                        </p>
+                    </div>
+
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
+                        <label className="basis-1/3 text-lg font-bold">
+                            Block Height
+                        </label>
+                        <p className="basis-2/3 text-right">
                             #{tx.block_height.toLocaleString()}
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Index in Block
                         </label>
@@ -58,7 +73,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Timestamp
                         </label>
@@ -67,7 +82,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Status
                         </label>
@@ -76,7 +91,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Shielded
                         </label>
@@ -85,7 +100,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Transaction ID
                         </label>
@@ -94,7 +109,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Protocol Version
                         </label>
@@ -103,7 +118,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Total Input
                         </label>
@@ -112,7 +127,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Total Output
                         </label>
@@ -121,7 +136,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             Start Index
                         </label>
@@ -130,7 +145,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         </p>
                     </div>
 
-                    <div className="flex flex-row gap-2 mb-4 w-full px-4">
+                    <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
                             End Index
                         </label>
@@ -140,43 +155,45 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+                {(tx.transaction_outputs.length > 0 || tx.transaction_inputs.length > 0) && (
+                    <div className="grid grid-cols-2 gap-2 border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                    <div className="gap-2">
+                        <div className="gap-2">
 
-                        <h3 className="text-lg font-bold p-2 mb-4">
-                            Inputs
-                            <span className="ml-1 font-mono">
-                                ({tx.transaction_outputs.length})
-                            </span>
-                        </h3>
+                            <h3 className="text-lg font-bold p-2 mb-4">
+                                Inputs
+                                <span className="ml-1 font-mono">
+                                    ({tx.transaction_outputs.length})
+                                </span>
+                            </h3>
 
-                        <div className="flex flex-col gap-4 mb-4 w-full px-4">
-                            {tx.transaction_outputs.map(io => (
-                                <TransactionIO key={io.index} io={io} />
-                            ))}
-                        </div>
-                    
-                    </div>
-
-                    <div className="gap-2">
-
-                        <h3 className="text-lg font-bold p-2 mb-4">
-                            Outputs
-                            <span className="ml-1 font-mono">
-                                ({tx.transaction_inputs.length})
-                            </span>
-                        </h3>
-
-                        <div className="flex flex-col gap-4 mb-4 w-full px-4">
-                            {tx.transaction_inputs.map(io => (
-                                <TransactionIO key={io.index} io={io} />
-                            ))}
+                            <div className="flex flex-col gap-4 mb-4 w-full px-4">
+                                {tx.transaction_outputs.map(io => (
+                                    <TransactionIO key={io.index} io={io} />
+                                ))}
+                            </div>
+                        
                         </div>
 
-                    </div>
+                        <div className="gap-2">
 
-                </div>
+                            <h3 className="text-lg font-bold p-2 mb-4">
+                                Outputs
+                                <span className="ml-1 font-mono">
+                                    ({tx.transaction_inputs.length})
+                                </span>
+                            </h3>
+
+                            <div className="flex flex-col gap-4 mb-4 w-full px-4">
+                                {tx.transaction_inputs.map(io => (
+                                    <TransactionIO key={io.index} io={io} />
+                                ))}
+                            </div>
+
+                        </div>
+
+                    </div>
+                )}
 
                 {tx.identifiers.length > 0 && (
                     <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
