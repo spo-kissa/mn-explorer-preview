@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import GetTransactionInputByTxId, { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
+import GetTransactionOutputByTxId, { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 
 /**
  * Transaction Identifier
@@ -94,8 +95,7 @@ export default async function GetTransactionByHash(hash: string)
     });
 
     const txInputs = await GetTransactionInputByTxId(tx.id);
-
-    console.log(txInputs);
+    const txOutputs = await GetTransactionOutputByTxId(tx.id);
 
     return {
         id: Number(tx.id),
@@ -116,6 +116,7 @@ export default async function GetTransactionByHash(hash: string)
         unshielded_total_output: Number(tx.unshielded_total_output),
         identifiers: txIdentifiers,
         transaction_inputs: txInputs,
+        transaction_outputs: txOutputs,
         raw: tx.raw,
         block_ledger_parameters: tx.block_ledger_parameters,
     };

@@ -63,7 +63,7 @@ export default async function GetTransactionInputByTxId(txId: number)
 
     return inputs.map((input) => {
         return {
-            index: Number(input.index) + 1,
+            index: Number(input.index),
             prev_tx_hash: hashToPrefix(input.prev_tx_hash),
             prev_tx_output_tx: Number(input.prev_tx_output_tx),
             prev_output_id: Number(input.prev_output_id),
