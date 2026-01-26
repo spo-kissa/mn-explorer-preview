@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { isHash, isHeight } from "@/lib/query";
 import GetBlockByHash from "@/lib/db/GetBlockByHash";
 import GetBlockByHeight from "@/lib/db/GetBlockByHeight";
-import { isHash, isHeight } from "@/lib/query";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { q } = req.query;
