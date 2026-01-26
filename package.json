@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "bunx next dev",
     "dev:ws": "bun run ws-server.ts",
-    "build": "next build",
-    "start": "next start",
+    "dev:all": "bunx concurrently \"bunx next dev\" \"bun run ws-server.ts\"",
+    "build": "bunx next build",
+    "start": "bunx next start",
+    "start:ws": "bun run ws-server.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
     "sass": "^1.97.3",
