@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Header from "@/components/layouts/Header";
 import Footer from "@/components/layouts/Footer";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./globals.scss";
@@ -30,11 +31,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <ErrorBoundary>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </ErrorBoundary>
       </body>
     </html>
   );

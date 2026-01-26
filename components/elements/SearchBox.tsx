@@ -29,8 +29,11 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
     }, []);
 
     const handleSearch = () => {
+        console.log("SearchBox handleSearch called", { selectedType, searchQuery, onSearch: !!onSearch });
         if (onSearch) {
             onSearch(selectedType, searchQuery);
+        } else {
+            console.warn("onSearch callback is not provided");
         }
     };
 

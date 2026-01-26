@@ -1,5 +1,5 @@
 import Link from "next/link";
-import SearchBox from "../elements/SearchBox";
+import SearchElement from "../elements/SearchElement";
 
 export default function Header() {
     return (
@@ -13,7 +13,7 @@ export default function Header() {
                 </span>
             </h1>
             <div className="flex-justify-end w-[500px]">
-                <SearchBox />
+                <SearchElement />
             </div>
             <div className="flex flex-justify-end">
                 <span className="text-medium"><Link href="/block">Blocks</Link></span>&nbsp;/&nbsp;
