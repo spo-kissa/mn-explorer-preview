@@ -1,12 +1,12 @@
 "use client";
 
 import { Suspense, useState } from "react";
+import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
 import Link from "next/link";
 import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
 import useGetTransactionsByBlockHash, { UseGetTransactionsByBlockHashResult } from "@/app/hooks/useGetTransactionsByBlockHash";
-import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
 
 export default function BlockDetail({ hash }: { hash: string }) {
     
@@ -141,7 +141,9 @@ export default function BlockDetail({ hash }: { hash: string }) {
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
                         <p className="basis-2/3 font-mono text-sm text-right">
-                            {block.parent_hash}
+                            <Link href={`/block/${block.parent_hash}`} className="hover:opacity-80 transition-opacity">
+                                {block.parent_hash}
+                            </Link>
                             <CopyToClipboard text={block.parent_hash} />
                         </p>
                     </div>

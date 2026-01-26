@@ -18,7 +18,7 @@ export default function RecentBlock({ block }: { block: RecentBlock }) {
     const hash = block.hash.slice(0, 14) + "..." + block.hash.slice(-10);
 
     return (
-        <Link href={`/block/${block.hash}`} className="flex flex-row gap-2 items-center justify-between border border-gray-700 rounded-md px-2 py-2 w-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors">
+        <Link href={`/block/${block.hash}`} className="hover:opacity-80 flex flex-row gap-2 items-center justify-between border border-gray-700 rounded-md px-2 py-2 w-full hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors transition-opacity">
             <li className="flex flex-row gap-1 items-center justify-between w-full">
                 <dl className="flex flex-row gap-2 items-center justify-between w-full">
                     <div className="flex flex-col gap-1">
