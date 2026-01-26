@@ -23,8 +23,8 @@ export enum TokenTypes {
 export function tokenTypeToName(tokenType: string): string {
 
     if (tokenType === TokenTypes.NIGHT) {
-        return TokenTypes.NIGHT.name;
+        return "NIGHT";
     }
 
-    return TokenTypes.UNKNOWN.name;
+    return "UNKNOWN";
 }
