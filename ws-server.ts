@@ -1,8 +1,8 @@
 // Bun ネイティブの WebSocket サーバ
 
-import GetStats from "./lib/db/GetStats";
-import GetRecentBlocks from "./lib/db/GetRecentBlocks";
-import GetRecentTransactions from "./lib/db/GetRecentTransactions";
+import GetStats from "@/lib/db/GetStats";
+import GetRecentBlocks from "@/lib/db/GetRecentBlocks";
+import GetRecentTransactions from "@/lib/db/GetRecentTransactions";
 
 interface RecentBlock {
     height: number;

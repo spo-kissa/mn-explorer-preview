@@ -1,5 +1,8 @@
 import { Transaction } from "@/lib/db/GetTransactionByHash";
 import { normalizeId, normalizeIndex, normalizeArray, normalizeHash, normalizeTimestamp, normalizeBoolean, normalizeAmount, normalizeStatus, normalizeHeight, normalizeLedgerParameters, normalizeRaw } from "@/lib/converter";
+import { TransactionIdentifier } from "@/lib/db/GetTransactionByHash";
+import { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
+import { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 
 /**
  * トランザクションを正規化します。
@@ -7,7 +10,10 @@ import { normalizeId, normalizeIndex, normalizeArray, normalizeHash, normalizeTi
  * @returns 正規化されたトランザクション
  */
 export function normalizeTransaction(
-    transaction: Transaction
+    transaction: any,
+    identifiers: TransactionIdentifier[] = [] as TransactionIdentifier[],
+    inputs: TransactionInput[] = [] as TransactionInput[],
+    outputs: TransactionOutput[] = [] as TransactionOutput[]
 ): Transaction
 {
     const tx = transaction;
@@ -29,9 +35,9 @@ export function normalizeTransaction(
         end_index: normalizeIndex(tx.end_index),
         unshielded_total_input: normalizeAmount(tx.unshielded_total_input),
         unshielded_total_output: normalizeAmount(tx.unshielded_total_output),
-        identifiers: normalizeArray(tx.identifiers),
-        transaction_inputs: normalizeArray(tx.transaction_inputs),
-        transaction_outputs: normalizeArray(tx.transaction_outputs),
+        identifiers: normalizeArray(identifiers),
+        transaction_inputs: normalizeArray(inputs),
+        transaction_outputs: normalizeArray(outputs),
         raw: normalizeRaw(tx.raw),
         block_ledger_parameters: normalizeLedgerParameters(tx.block_ledger_parameters),
     }

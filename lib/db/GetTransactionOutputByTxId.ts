@@ -30,7 +30,7 @@ export interface TransactionOutput {
 export default async function GetTransactionOutputByTxId(txId: number)
 : Promise<TransactionOutput[]> {
 
-    const outputs: TransactionOutput[] = await prisma.tx_outputs.findMany({
+    const outputs = await prisma.tx_outputs.findMany({
         where: { tx_id: txId },
         select: {
             index: true,
@@ -79,7 +79,7 @@ export default async function GetTransactionOutputByTxId(txId: number)
             token_type: output.token_type,
             spent_at_transaction_id: Number(output.spent_at_transaction_id),
             spent_at_transaction_hash: hashToPrefix(output.spent_at_transaction_hash),
-        };
+        } as TransactionOutput;
     });
 
 }

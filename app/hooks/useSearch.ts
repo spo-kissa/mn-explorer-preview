@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { Block } from "@/lib/db/GetBlockByHash";
-import { Transaction } from "@/lib/transaction";
+import { Transaction } from "@/lib/db/GetTransactionByHash";
 
 export interface SearchResult {
     blocks: Block[];

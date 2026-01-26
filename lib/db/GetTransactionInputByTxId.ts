@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { hashToPrefix, tokenTypeToName } from "@/lib/converter";
+import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeJSON, normalizeId } from "@/lib/converter";
 
 /**
  * Transaction Input
@@ -30,7 +30,7 @@ export interface TransactionInput {
 export default async function GetTransactionInputByTxId(txId: number)
 : Promise<TransactionInput[]> {
 
-    const inputs: TransactionInput[] = await prisma.tx_inputs.findMany({
+    const inputs = await prisma.tx_inputs.findMany({
         where: { tx_id: txId },
         select: {
             index: true,
@@ -63,24 +63,27 @@ export default async function GetTransactionInputByTxId(txId: number)
 
     return inputs.map((input) => {
         return {
-            index: Number(input.index),
-            prev_tx_hash: hashToPrefix(input.prev_tx_hash),
-            prev_tx_output_tx: Number(input.prev_tx_output_tx),
+            index: normalizeIndex(input.index),
+            prev_tx_hash: normalizeHash(input.prev_tx_hash),
+            prev_tx_output_tx: Number(input.prev_tx_output_ix),
             prev_output_id: Number(input.prev_output_id),
             address_id: Number(input.address_id),
-            create_at_tx_hash: hashToPrefix(input.create_at_tx_hash),
-            spent_at_tx_hash: hashToPrefix(input.spent_at_tx_hash),
-            intent_hash: hashToPrefix(input.intent_hash),
-            ctime: Number(input.ctime),
+            created_at_tx_hash: normalizeHash(input.created_at_tx_hash),
+            spent_at_tx_hash: normalizeHash(input.spent_at_tx_hash),
+            intent_hash: normalizeHash(input.intent_hash),
+            ctime: normalizeTimestamp(input.ctime),
             registered_for_dust_generation: input.registered_for_dust_generation,
-            token_type: input.token_type,
-            spent_at_transaction_id: Number(input.spent_at_transaction_id),
-            spent_at_transaction_hash: hashToPrefix(input.spent_at_transaction_hash),
+            token_type: normalizeTokenType(input.token_type),
+            spent_at_transaction_id: normalizeId(input.spent_at_transaction_id),
+            spent_at_transaction_hash: normalizeHash(input.spent_at_transaction_hash),
             account_addr: input.account_addr,
-            value: Number(input.value),
-            shielded: input.shielded,
+            value: normalizeAmount(input.value),
+            shielded: normalizeBoolean(input.shielded),
             initial_nonce: input.initial_nonce,
-            raw: input.raw,
-        }
+            raw: normalizeJSON(input.raw),
+
+            token_type_name: '',
+            spent_at_transaction_index: 0,
+        } as TransactionInput;
     });
 }

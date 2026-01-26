@@ -59,7 +59,7 @@ export default function SearchElement() {
                         </div>
                     )}
 
-                    {result && !isLoading && result.error === "error" && (
+                    {result && !isLoading && result.error && (
                         <div className="p-2 text-center text-sm text-red-500 dark:text-red-400">
                             {result.error || "Invalid query"}
                         </div>

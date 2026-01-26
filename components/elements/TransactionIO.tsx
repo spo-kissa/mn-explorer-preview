@@ -1,10 +1,10 @@
-import { TransaciontInput } from "@/lib/db/GetTransactionInputByTxId";
-import { TransaciontOutput } from "@/lib/db/GetTransactionOutputByTxId";
+import { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
+import { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 import { TokenTypes, tokenTypeToName } from "@/lib/converter";
 import { formatLovelace } from "@/lib/lovelace";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 
-export type TransactionIO = TransaciontInput | TransaciontOutput;
+export type TransactionIO = TransactionInput | TransactionOutput;
 
 export default function TransactionIO({ io }: { io: TransactionIO }) {
     return (

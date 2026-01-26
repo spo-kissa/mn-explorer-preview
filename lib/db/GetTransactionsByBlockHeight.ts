@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { normalizeTransaction } from "@/lib/transaction";
 
 export interface Transaction {
     id: number;
@@ -23,7 +24,8 @@ export interface Transaction {
 
 export default async function GetTransactionsByBlockHeight(blockHeight: number)
 : Promise<Transaction[] | null> {
-    const transactions: Transaction[] = await prisma.transactions.findMany({
+
+    const transactions = await prisma.transactions.findMany({
         where: { block_height: blockHeight },
         select: {
             id: true,
@@ -51,24 +53,7 @@ export default async function GetTransactionsByBlockHeight(blockHeight: number)
         return null;
     }
 
-    return transactions.map((transaction) => ({
-        id: Number(transaction.id),
-        hash: transaction.hash,
-        index_in_block: Number(transaction.index_in_block),
-        timestamp: transaction.timestamp.getTime(),
-        is_shielded: transaction.is_shielded,
-        total_input: transaction.total_input,
-        total_output: transaction.total_output,
-        status: transaction.status,
-        raw: transaction.raw,
-        block_height: transaction.block_height,
-        block_hash: transaction.block_hash,
-        protocol_version: transaction.protocol_version,
-        transaction_id: transaction.transaction_id,
-        start_index: transaction.start_index,
-        end_index: transaction.end_index,
-        unshielded_total_input: transaction.unshielded_total_input,
-        unshielded_total_output: transaction.unshielded_total_output,
-        block_ledger_parameters: transaction.block_ledger_parameters,
-    }));
+    return transactions.map((tx) => {
+        return normalizeTransaction(tx) as Transaction;
+    });
 }

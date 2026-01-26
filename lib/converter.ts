@@ -1,4 +1,5 @@
 import { isHash } from "@/lib/query";
+import BigNumber from "bignumber.js";
 
 /**
  * ハッシュの先頭に0xを追加する
@@ -21,11 +22,15 @@ export function hashToPrefix(hash: string | null | undefined): string | null {
  * @param hash ハッシュ
  * @returns 正規化されたハッシュ
  */
-export function normalizeHash(hash: string): string | null {
-    if (!isHash(hash)) {
-        return null;
+export function normalizeHash(hash: string | null): string {
+    if (hash === null || hash === undefined || !isHash(hash)) {
+        return '0x' + "0".repeat(64);
     }
-    return hashToPrefix(hash);
+    hash = hashToPrefix(hash);
+    if (hash === null) {
+        return '0x' + "0".repeat(64);
+    }
+    return hash;
 }
 
 /**
@@ -33,9 +38,9 @@ export function normalizeHash(hash: string): string | null {
  * @param height 高さ
  * @returns 正規化された高さ
  */
-export function normalizeHeight(height: number): number | null {
-    if (height < 0) {
-        return null;
+export function normalizeHeight(height: number | bigint | null): number {
+    if (height === null || height < 0) {
+        throw new Error("Height must be greater than 0");
     }
     return Number(height);
 }
@@ -45,14 +50,14 @@ export function normalizeHeight(height: number): number | null {
  * @param timestamp タイムスタンプ
  * @returns 正規化されたタイムスタンプ
  */
-export function normalizeTimestamp(timestamp: Date | number): number | null {
+export function normalizeTimestamp(timestamp: Date | number | null): number {
     if (timestamp instanceof Date) {
         return Number(timestamp.getTime());
     }
     if (typeof timestamp === 'number') {
         return Number(timestamp);
     }
-    return null;
+    return 0;
 }
 
 /**
@@ -60,9 +65,9 @@ export function normalizeTimestamp(timestamp: Date | number): number | null {
  * @param id ID
  * @returns 正規化されたID
  */
-export function normalizeId(id: number): number | null {
-    if (id <= 0) {
-        return null;
+export function normalizeId(id: number | bigint | null): number {
+    if (id === null || id <= 0) {
+        throw new Error("Id must be greater than 0");
     }
     return Number(id);
 }
@@ -72,9 +77,9 @@ export function normalizeId(id: number): number | null {
  * @param index インデックス
  * @returns 正規化されたインデックス
  */
-export function normalizeIndex(index: number): number | null {
+export function normalizeIndex(index: number): number {
     if (index < 0) {
-        return null;
+        throw new Error("Index must be greater than 0");
     }
     return Number(index);
 }
@@ -84,11 +89,27 @@ export function normalizeIndex(index: number): number | null {
  * @param amount 金額
  * @returns 正規化された金額
  */
-export function normalizeAmount(amount: number): number | null {
-    if (amount < 0) {
-        return null;
+export function normalizeAmount(amount: BigNumber | number | { toNumber: () => number } | null): number {
+    if (amount === null) {
+        throw new Error("Amount must be greater than 0");
     }
-    return Number(amount);
+    // PrismaのDecimal型やtoNumberメソッドを持つオブジェクトの場合
+    if (typeof amount === 'object' && amount !== null && 'toNumber' in amount && typeof amount.toNumber === 'function') {
+        const num = amount.toNumber();
+        if (num < 0) {
+            throw new Error("Amount must be greater than 0");
+        }
+        return num;
+    }
+    // BigNumberの場合（toNumberメソッドを持つが、上記のチェックで処理される）
+    // numberの場合
+    if (typeof amount === 'number') {
+        if (amount < 0) {
+            throw new Error("Amount must be greater than 0");
+        }
+        return Number(amount);
+    }
+    throw new Error("Amount must be a number, BigNumber, or Decimal");
 }
 
 /**
@@ -96,7 +117,7 @@ export function normalizeAmount(amount: number): number | null {
  * @param value 真偽値
  * @returns 正規化された真偽値
  */
-export function normalizeBoolean(value: boolean): boolean | null {
+export function normalizeBoolean(value: boolean): boolean {
     return Boolean(value);
 }
 
@@ -112,16 +133,33 @@ export function normalizeStatus(status: string | null): string {
     return status.toUpperCase();
 }
 
+
+export function normalizeTokenType(tokenType: string | null): string {
+    if (tokenType === null || tokenType.length === 0) {
+        return "0".repeat(64);
+    }
+    return tokenType.toLowerCase();
+}
+
+
+export function normalizeJSON(json: any | null): string {
+    if (json === null || json === undefined || typeof json !== 'string' || json.length === 0) {
+        return '{}';
+    }
+    return json;
+}
+
+
 /**
  * 生データを正規化します。
  * @param raw 生データ
  * @returns 正規化された生データ
  */
-export function normalizeRaw(raw: string): string | null {
-    if (raw.length === 0) {
-        return null;
+export function normalizeRaw(raw: string | null): string {
+    if (raw === null || raw === undefined || raw.length === 0) {
+        return '';
     }
-    return raw;
+    return raw.toLowerCase();
 }
 
 /**
@@ -129,9 +167,9 @@ export function normalizeRaw(raw: string): string | null {
  * @param ledgerParameters ブロックレジスタスパラメータ
  * @returns 正規化されたブロックレジスタスパラメータ
  */
-export function normalizeLedgerParameters(ledgerParameters: string): string | null {
-    if (ledgerParameters.length === 0) {
-        return null;
+export function normalizeLedgerParameters(ledgerParameters: string | null): string {
+    if (ledgerParameters === null || ledgerParameters === undefined || ledgerParameters.length === 0) {
+        return '';
     }
     return ledgerParameters.toLowerCase();
 }

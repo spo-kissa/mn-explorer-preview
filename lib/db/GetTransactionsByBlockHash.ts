@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { normalizeTransaction } from "@/lib/transaction";
 
 export interface Transaction {
     id: number;
@@ -24,7 +25,7 @@ export interface Transaction {
 export default async function GetTransactionsByBlockHash(blockHash: string)
 : Promise<Transaction[] | null> {
 
-    const transactions: Transaction[] = await prisma.transactions.findMany({
+    const transactions = await prisma.transactions.findMany({
         where: { block_hash: blockHash },
         select: {
             id: true,
@@ -52,24 +53,27 @@ export default async function GetTransactionsByBlockHash(blockHash: string)
         return null;
     }
 
-    return transactions.map((tx) => ({
-        id: Number(tx.id),
-        hash: tx.hash,
-        index_in_block: Number(tx.index_in_block),
-        timestamp: tx.timestamp.getTime(),
-        is_shielded: tx.is_shielded,
-        total_input: Number(tx.total_input),
-        total_output: Number(tx.total_output),
-        status: tx.status,
-        raw: tx.raw,
-        block_height: Number(tx.block_height),
-        block_hash: tx.block_hash,
-        protocol_version: Number(tx.protocol_version),
-        transaction_id: Number(tx.transaction_id),
-        start_index: Number(tx.start_index),
-        end_index: Number(tx.end_index),
-        unshielded_total_input: Number(tx.unshielded_total_input),
-        unshielded_total_output: Number(tx.unshielded_total_output),
-        block_ledger_parameters: tx.block_ledger_parameters,
-    }));
+    return transactions.map((tx) => {
+        return normalizeTransaction(tx) as Transaction;
+        // return {
+        //     id: Number(tx.id),
+        //     hash: tx.hash,
+        //     index_in_block: Number(tx.index_in_block),
+        //     timestamp: tx.timestamp.getTime(),
+        //     is_shielded: tx.is_shielded,
+        //     total_input: Number(tx.total_input),
+        //     total_output: Number(tx.total_output),
+        //     status: tx.status,
+        //     raw: tx.raw,
+        //     block_height: Number(tx.block_height),
+        //     block_hash: tx.block_hash,
+        //     protocol_version: Number(tx.protocol_version),
+        //     transaction_id: Number(tx.transaction_id),
+        //     start_index: Number(tx.start_index),
+        //     end_index: Number(tx.end_index),
+        //     unshielded_total_input: Number(tx.unshielded_total_input),
+        //     unshielded_total_output: Number(tx.unshielded_total_output),
+        //     block_ledger_parameters: tx.block_ledger_parameters,
+        // } as Transaction;
+    });
 }

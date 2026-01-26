@@ -1,18 +1,19 @@
 import prisma from "@/lib/db";
+import { normalizeHash, normalizeJSON, normalizeLedgerParameters, normalizeHeight, normalizeTimestamp, normalizeBoolean } from "@/lib/converter";
 
-interface Block {
+export interface Block {
     height: number;
     hash: string;
     parent_hash: string;
     slot: number;
     timestamp: number;
     tx_count: number;
-    state_root: string;
-    is_finalized: boolean;
+    state_root: string | null;
+    is_finalized: boolean | null;
     raw: string;
     author: string;
     protocol_version: number;
-    ledger_parameters: string;
+    ledger_parameters: string | null;
 }
 
 export default async function GetBlockByHash(hash: string): Promise<Block | null> {
@@ -44,17 +45,17 @@ export default async function GetBlockByHash(hash: string): Promise<Block | null
     }
 
     return {
-        height: Number(block.height),
-        hash: '0x' + block.hash,
-        parent_hash: '0x' + block.parent_hash,
+        height: normalizeHeight(block.height),
+        hash: normalizeHash(block.hash),
+        parent_hash: normalizeHash(block.parent_hash),
         slot: Number(block.slot),
-        timestamp: Number(block.timestamp.getTime()),
+        timestamp: normalizeTimestamp(block.timestamp),
         tx_count: Number(block.tx_count),
-        state_root: block.state_root,
-        is_finalized: block.is_finalized,
-        raw: block.raw,
-        author: block.author,
+        state_root: normalizeHash(block.state_root),
+        is_finalized: normalizeBoolean(block.is_finalized),
+        raw: normalizeJSON(block.raw),
+        author: normalizeHash(block.author),
         protocol_version: Number(block.protocol_version),
-        ledger_parameters: block.ledger_parameters,
+        ledger_parameters: normalizeLedgerParameters(block.ledger_parameters),
     };
 }

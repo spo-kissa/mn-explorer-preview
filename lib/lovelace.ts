@@ -17,7 +17,9 @@ export function formatLovelace(
     }
 ): string {
 
-    lovelace = lovelace / 1000000;
+    let value = Number(lovelace);
+
+    value = value / 1000000;
     
     const fractionDigits = opts?.fractionDigits ?? 6;
     const fallback = opts?.fallback ?? "-";
@@ -26,7 +28,7 @@ export function formatLovelace(
         return fallback;
     }
 
-    const bn = new BigNumber(lovelace);
+    const bn = new BigNumber(value);
 
     if (!bn.isFinite()) {
         return fallback;

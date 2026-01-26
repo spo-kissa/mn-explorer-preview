@@ -28,7 +28,7 @@ const contractIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none
     <path d="M9 15L11 17L15 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
-export default function Stats({ stats }: { stats: StatsType }) {
+export default function Stats({ stats }: { stats?: StatsType | undefined }) {
 
     return (
         <div className="w-full flex flex-row gap-2 items-center mb-10">

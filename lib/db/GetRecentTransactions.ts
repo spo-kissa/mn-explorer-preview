@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { normalizeHash, normalizeTimestamp, normalizeHeight, normalizeIndex, normalizeStatus } from "@/lib/converter";
 
 interface RecentTransaction {
     hash: string;
@@ -29,10 +30,10 @@ export default async function GetRecentTransactions(count: number = 10): Promise
     });
 
     return transactions.map((transaction) => ({
-        hash: '0x' + transaction.hash,
-        timestamp: Number(transaction.timestamp.getTime()),
-        status: transaction.status,
-        block_height: Number(transaction.block_height),
-        index_in_block: Number(transaction.index_in_block),
+        hash: normalizeHash(transaction.hash),
+        timestamp: normalizeTimestamp(transaction.timestamp),
+        status: normalizeStatus(transaction.status),
+        block_height: normalizeHeight(transaction.block_height),
+        index_in_block: normalizeIndex(transaction.index_in_block),
     }));
 }

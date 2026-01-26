@@ -1,10 +1,10 @@
 "use client";
 
-import { RecentTransaction } from "@/app/hooks/useStatsWebSocket";
+import { RecentTransaction as RecentTransactionType } from "@/app/hooks/useStatsWebSocket";
 import Link from "next/link";
 import CopyToClipboard from "./CopyToClipboard";
 
-export default function RecentTransaction({ tx }: { tx: RecentTransaction }) {
+export default function RecentTransaction({ tx }: { tx: RecentTransactionType }) {
 
     const diffMs = (new Date()).getTime() - tx.timestamp;
     const diffSec = Math.max(0, Math.floor(diffMs / 1000));

@@ -2,7 +2,7 @@ import prisma from "@/lib/db";
 import { Transaction } from "@/lib/db/GetTransactionByHash";
 import { isHash } from "@/lib/query";
 import { normalizeHash } from "@/lib/converter";
-import { normalizeTransactions } from "@/lib/transaction";
+import { normalizeTransaction } from "@/lib/transaction";
 
 /**
  * トランザクションを検索します。
@@ -21,7 +21,7 @@ export default async function SearchTransactions(hash: string)
         return [];
     }
 
-    const transactions: Transaction[] = await prisma.transactions.findMany({
+    const transactions = await prisma.transactions.findMany({
         where: {
             hash: normalizedHash,
         },
@@ -51,5 +51,5 @@ export default async function SearchTransactions(hash: string)
         return [] as Transaction[];
     }
 
-    return normalizeTransactions(transactions);
+    return transactions.map((tx) => normalizeTransaction(tx) as Transaction);
 }

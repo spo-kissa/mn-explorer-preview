@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { RecentBlock } from "@/app/hooks/useStatsWebSocket";
+import { RecentBlock as RecentBlockType } from "@/app/hooks/useStatsWebSocket";
 import CopyToClipboard from "./CopyToClipboard";
 
-export default function RecentBlock({ block }: { block: RecentBlock }) {
+export default function RecentBlock({ block }: { block: RecentBlockType }) {
 
     const diffMs = (new Date()).getTime() - block.timestamp;
     const diffSec = Math.max(0, Math.floor(diffMs / 1000));

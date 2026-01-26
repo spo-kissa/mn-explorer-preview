@@ -2,13 +2,14 @@ import prisma from "@/lib/db";
 import GetTransactionInputByTxId, { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
 import GetTransactionOutputByTxId, { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 import { normalizeTransaction } from "@/lib/transaction";
+import { normalizeId } from "@/lib/converter";
 
 /**
  * Transaction Identifier
  */
 export interface TransactionIdentifier {
     tx_hash: string;
-    index_in_block: number;
+    index_in_tx: number;
     identifier: string;
 }
 
@@ -24,7 +25,6 @@ export interface Transaction {
     total_input: number;
     total_output: number;
     status: string;
-    raw: string;
     block_height: number;
     block_hash: string;
     protocol_version: number;
@@ -33,7 +33,6 @@ export interface Transaction {
     end_index: number;
     unshielded_total_input: number;
     unshielded_total_output: number;
-    block_ledger_parameters: string;
     identifiers: TransactionIdentifier[];
     transaction_inputs: TransactionInput[];
     transaction_outputs: TransactionOutput[];
@@ -44,7 +43,7 @@ export interface Transaction {
 export default async function GetTransactionByHash(hash: string)
 : Promise<Transaction | null> {
 
-    const transaction: Transaction = await prisma.transactions.findUnique({
+    const transaction = await prisma.transactions.findUnique({
         where: { hash: hash},
         select: {
             id: true,
@@ -72,7 +71,7 @@ export default async function GetTransactionByHash(hash: string)
         return null;
     }
 
-    let identifiers: TransactionIdentifier[] = await prisma.tx_identifiers.findMany({
+    let identifiers = await prisma.tx_identifiers.findMany({
         where: { tx_id: transaction.id },
         select: {
             tx_hash: true,
@@ -89,17 +88,18 @@ export default async function GetTransactionByHash(hash: string)
     }
 
     const tx = transaction;
+    const id = normalizeId(transaction.id);
 
     const txIdentifiers = identifiers.map((id) => {
         return {
             tx_hash: '0x' + id.tx_hash,
             index_in_tx: Number(id.index_in_tx) + 1,
             identifier: id.identifier
-        };
+        } as TransactionIdentifier;
     });
 
-    const txInputs = await GetTransactionInputByTxId(tx.id);
-    const txOutputs = await GetTransactionOutputByTxId(tx.id);
+    const txInputs = await GetTransactionInputByTxId(id);
+    const txOutputs = await GetTransactionOutputByTxId(id);
 
     return normalizeTransaction(tx, txIdentifiers, txInputs, txOutputs);
 }

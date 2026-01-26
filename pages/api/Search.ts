@@ -3,6 +3,7 @@ import { isHash, isHeight } from "@/lib/query";
 import GetBlockByHash from "@/lib/db/GetBlockByHash";
 import GetBlockByHeight from "@/lib/db/GetBlockByHeight";
 import SearchTransactions from "@/lib/db/SearchTransactions";
+import { Block } from "@/lib/db/GetBlockByHash";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { q } = req.query;
@@ -36,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     
     if (isHeight(query)) {
-        const block = await GetBlockByHeight(query);
+        const block = await GetBlockByHeight(parseInt(query));
         const blocks = new Array<Block>();
         if (block) {
             blocks.push(block);

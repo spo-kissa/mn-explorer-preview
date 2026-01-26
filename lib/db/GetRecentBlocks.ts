@@ -1,9 +1,10 @@
 import prisma from "@/lib/db";
+import { normalizeHash, normalizeTimestamp, normalizeHeight, normalizeIndex } from "@/lib/converter";
 
 interface RecentBlock {
     height: number;
     hash: string;
-    timestamp: Date;
+    timestamp: number;
     txsCount: number;
 }
 
@@ -26,9 +27,9 @@ export default async function GetRecentBlocks(count: number = 10): Promise<Recen
     });
 
     return blocks.map((block) => ({
-        height: Number(block.height),
-        hash: '0x' + block.hash,
-        timestamp: Number(block.timestamp.getTime()),
-        txsCount: Number(block.tx_count),
+        height: normalizeHeight(block.height),
+        hash: normalizeHash(block.hash),
+        timestamp: normalizeTimestamp(block.timestamp),
+        txsCount: normalizeIndex(block.tx_count),
     }));
 }
