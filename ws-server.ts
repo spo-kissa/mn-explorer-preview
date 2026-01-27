@@ -39,7 +39,7 @@ interface WSData {
     data: unknown;
 }
 
-const WS_PATH = "/api/v1/ws";
+const WS_PATH = "/ws/api/v1";
 
 // 接続中クライアントを管理
 const clients = new Set<ServerWebSocket<unknown>>();

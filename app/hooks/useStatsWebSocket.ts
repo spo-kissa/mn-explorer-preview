@@ -66,7 +66,7 @@ export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}
         const wsUrl =
             url ??
             process.env.NEXT_PUBLIC_WS_URL ??
-            "ws://localhost:4000/api/v1/ws";
+            "wss://mn-explorer.net/ws/api/v1";
 
         const socket = new WebSocket(wsUrl);
         socketRef.current = socket;
