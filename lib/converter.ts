@@ -67,7 +67,7 @@ export function normalizeTimestamp(timestamp: Date | number | null): number {
  */
 export function normalizeId(id: number | bigint | null): number {
     if (id === null || id <= 0) {
-        throw new Error("Id must be greater than 0");
+        return 0;
     }
     return Number(id);
 }
@@ -143,8 +143,8 @@ export function normalizeTokenType(tokenType: string | null): string {
 
 
 export function normalizeJSON(json: any | null): string {
-    if (json === null || json === undefined || typeof json !== 'string' || json.length === 0) {
-        return '{}';
+    if (json === null || json === undefined || typeof json !== 'object') {
+        return {};
     }
     return json;
 }

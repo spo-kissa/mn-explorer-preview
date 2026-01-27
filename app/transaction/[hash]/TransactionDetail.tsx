@@ -204,10 +204,10 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                             {tx.identifiers.map(id => (
                                 
-                                <div key={id.tx_hash} className="flex flex-row items-center gap-2 w-full px-4">
+                                <div key={id.index_in_tx} className="flex flex-row items-center gap-2 w-full px-4">
                                     <p className="font-mono text-sm">
                                         <span className="h-[32px] w-[32px] inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md text-white">
-                                            {id.tx_hash}
+                                            {id.index_in_tx}
                                         </span>
                                     </p>
                                     <p className="justify-center font-mono text-sm">
