@@ -142,25 +142,32 @@ export function normalizeTokenType(tokenType: string | null): string {
 }
 
 
-export function normalizeJSON(json: any | null): string {
-    if (json === null || json === undefined || typeof json !== 'object') {
-        return {};
-    }
-    return json;
-}
-
-
 /**
  * 生データを正規化します。
  * @param raw 生データ
  * @returns 正規化された生データ
  */
 export function normalizeRaw(raw: string | null): string {
-    if (raw === null || raw === undefined || raw.length === 0) {
+    if (raw === null || raw === undefined || typeof raw !== 'string') {
         return '';
     }
     return raw.toLowerCase();
 }
+
+
+/**
+ * オブジェクトを正規化します。
+ * @param object オブジェクト
+ * @returns 正規化されたオブジェクト
+ */
+export function normalizeObject(object: any | null): object {
+    console.log(typeof object);
+    if (object === null || object === undefined || typeof object !== 'object') {
+        return {};
+    }
+    return object;
+}
+
 
 /**
  * ブロックレジスタスパラメータを正規化します。

@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { normalizeHash, normalizeJSON, normalizeLedgerParameters, normalizeHeight, normalizeTimestamp, normalizeBoolean } from "@/lib/converter";
+import { normalizeHash, normalizeObject, normalizeLedgerParameters, normalizeHeight, normalizeTimestamp, normalizeBoolean } from "@/lib/converter";
 
 export interface Block {
     height: number;
@@ -10,7 +10,7 @@ export interface Block {
     tx_count: number;
     state_root: string | null;
     is_finalized: boolean | null;
-    raw: string;
+    raw: object;
     author: string;
     protocol_version: number;
     ledger_parameters: string | null;
@@ -53,7 +53,7 @@ export default async function GetBlockByHash(hash: string): Promise<Block | null
         tx_count: Number(block.tx_count),
         state_root: normalizeHash(block.state_root),
         is_finalized: normalizeBoolean(block.is_finalized),
-        raw: normalizeJSON(block.raw),
+        raw: normalizeObject(block.raw),
         author: normalizeHash(block.author),
         protocol_version: Number(block.protocol_version),
         ledger_parameters: normalizeLedgerParameters(block.ledger_parameters),

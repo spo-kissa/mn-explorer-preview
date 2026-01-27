@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeJSON, normalizeId } from "@/lib/converter";
+import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeRaw, normalizeId, normalizeObject } from "@/lib/converter";
 
 /**
  * Transaction Input
@@ -9,7 +9,7 @@ export interface TransactionInput {
     prev_tx_hash: string;
     prev_tx_output_tx: number;
     prev_output_id: number;
-    raw: string;
+    raw: object;
     address_id: number;
     created_at_tx_hash: string;
     spent_at_tx_hash: string;
@@ -80,7 +80,7 @@ export default async function GetTransactionInputByTxId(txId: number)
             value: normalizeAmount(input.value),
             shielded: normalizeBoolean(input.shielded),
             initial_nonce: input.initial_nonce,
-            raw: normalizeJSON(input.raw),
+            raw: normalizeObject(input.raw),
 
             token_type_name: '',
             spent_at_transaction_index: 0,
