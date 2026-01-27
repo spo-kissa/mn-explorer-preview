@@ -38,7 +38,7 @@ export default function SearchElement() {
     };
 
     return (
-        <div className="relative w-full mb-10">
+        <div className="relative w-full">
             <div className="flex flex-row gap-2 items-center">
                 <SearchBox onSearch={handleSearch} />
             </div>

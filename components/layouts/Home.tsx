@@ -12,7 +12,7 @@ export default function Home() {
     return (
         <div className="w-full">
             
-            <Stats stats={status?.stats} />
+            <Stats stats={status?.stats} className="m-4" />
 
             <div className="w-full flex flex-row gap-4 items-start">
                 <div className="w-1/2">
