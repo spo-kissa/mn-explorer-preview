@@ -161,7 +161,6 @@ export function normalizeRaw(raw: string | null): string {
  * @returns 正規化されたオブジェクト
  */
 export function normalizeObject(object: any | null): object {
-    console.log(typeof object);
     if (object === null || object === undefined || typeof object !== 'object') {
         return {};
     }

@@ -175,8 +175,8 @@ export default function BlockDetail({ hash }: { hash: string }) {
                             {t("blockDetail.author")}
                         </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
-                            0x{block.author}
-                            <CopyToClipboard text={"0x" + block.author} />
+                            {block.author}
+                            <CopyToClipboard text={block.author} />
                         </p>
                     </div>
 
@@ -185,8 +185,8 @@ export default function BlockDetail({ hash }: { hash: string }) {
                             {t("blockDetail.stateRoot")}
                         </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
-                            0x{block.state_root}
-                            <CopyToClipboard text={"0x" + block.state_root} />
+                            {block.state_root}
+                            <CopyToClipboard text={block.state_root} />
                         </p>
                     </div>
 
@@ -262,8 +262,8 @@ export default function BlockDetail({ hash }: { hash: string }) {
                                                     </span>
                                                 </dt>
                                                 <dd className="col-span-4 font-mono text-sm">
-                                                    0x{tx.hash}
-                                                    <span className="ml-2"><CopyToClipboard text={"0x" + tx.hash} /></span>
+                                                    {tx.hash}
+                                                    <span className="ml-2"><CopyToClipboard text={tx.hash} /></span>
                                                 </dd>
                                                 <dd className={`col-span-1 font-mono text-sm ${tx.status === "SUCCESS" ? "text-green-500" : "text-red-500"}`}>
                                                     {tx.status}
