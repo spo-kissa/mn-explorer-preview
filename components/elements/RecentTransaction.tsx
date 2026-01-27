@@ -3,9 +3,11 @@
 import { RecentTransaction as RecentTransactionType } from "@/app/hooks/useStatsWebSocket";
 import Link from "next/link";
 import CopyToClipboard from "./CopyToClipboard";
+import { useI18n } from "@/i18n";
 
 export default function RecentTransaction({ tx }: { tx: RecentTransactionType }) {
 
+    const { t } = useI18n();
     const diffMs = (new Date()).getTime() - tx.timestamp;
     const diffSec = Math.max(0, Math.floor(diffMs / 1000));
     const diffMin = Math.max(0, Math.floor(diffSec / 60));
@@ -15,10 +17,14 @@ export default function RecentTransaction({ tx }: { tx: RecentTransactionType })
     const diffMonth = diffWeek / 4;
     const diffYear = diffMonth / 12;
 
-    const timestamp = 
-        diffSec < 60 ? diffSec.toFixed(0) + " seconds ago" :
-        diffMin < 60 ? diffMin.toFixed(0) + " minutes " + (diffSec % 60).toFixed(0) + " seconds ago"
-        : new Date(tx.timestamp).toLocaleString();
+    const timestamp =
+        diffSec < 60
+            ? t("recentTransactions.secondsAgo").replace("{{seconds}}", diffSec.toFixed(0))
+            : diffMin < 60
+            ? t("recentTransactions.minutesSecondsAgo")
+                  .replace("{{minutes}}", diffMin.toFixed(0))
+                  .replace("{{seconds}}", (diffSec % 60).toFixed(0))
+            : new Date(tx.timestamp).toLocaleString();
     
     const hash = tx.hash.slice(0, 14) + "..." + tx.hash.slice(-10);
 

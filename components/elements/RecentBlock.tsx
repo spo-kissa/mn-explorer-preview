@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { RecentBlock as RecentBlockType } from "@/app/hooks/useStatsWebSocket";
 import CopyToClipboard from "./CopyToClipboard";
+import { useI18n } from "@/i18n";
 
 export default function RecentBlock({ block }: { block: RecentBlockType }) {
 
@@ -15,6 +16,7 @@ export default function RecentBlock({ block }: { block: RecentBlockType }) {
     // const diffMonth = diffWeek / 4;
     // const diffYear = diffMonth / 12;
 
+    const { t } = useI18n();
     const hash = block.hash.slice(0, 14) + "..." + block.hash.slice(-10);
 
     return (
@@ -31,8 +33,13 @@ export default function RecentBlock({ block }: { block: RecentBlockType }) {
                         </dd>
                     </div>
                     <div className="flex flex-col gap-2 items-end justify-end">
-                        <dd className="text-mono text-xs">{diffSec.toFixed(0)} seconds ago</dd>
-                        <dd className="text-mono text-xs">{block.txsCount} txs</dd>
+                        <dd className="text-mono text-xs">
+                            {t("recentBlocks.secondsAgo")
+                                .replace("{{seconds}}", diffSec.toFixed(0))}
+                        </dd>
+                        <dd className="text-mono text-xs">
+                            {t("recentBlocks.txs").replace("{{count}}", block.txsCount.toString())}
+                        </dd>
                     </div>
                 </dl>
             </li>

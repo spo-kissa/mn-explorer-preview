@@ -7,9 +7,11 @@ import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
 import useGetTransactionsByBlockHash, { UseGetTransactionsByBlockHashResult } from "@/app/hooks/useGetTransactionsByBlockHash";
+import { useI18n } from "@/i18n";
 
 export default function BlockDetail({ hash }: { hash: string }) {
     
+    const { t } = useI18n();
     const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
     const { transactions, isLoading: isTransactionsLoading, error: transactionsError, refetch: refetchTransactions } = useGetTransactionsByBlockHash(hash);
     const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
@@ -45,7 +47,7 @@ export default function BlockDetail({ hash }: { hash: string }) {
 
     const formatValue = (value: any): React.ReactNode => {
         if (value === null || value === undefined) {
-            return "N/A";
+            return t("stats.notAvailable");
         }
         if (typeof value === "object") {
             const prepared = prepareValue(value);
@@ -85,16 +87,24 @@ export default function BlockDetail({ hash }: { hash: string }) {
 
     const content = () => {
         if (isLoading || isTransactionsLoading) {
-            return <div>Loading...</div>;
+            return <div>{t("common.loading")}</div>;
         }
         if (error) {
-            return <div>Error: {error}</div>;
+            return (
+                <div>
+                    {t("common.error")}: {error}
+                </div>
+            );
         }
         if (transactionsError) {
-            return <div>Error: {transactionsError}</div>;
+            return (
+                <div>
+                    {t("common.error")}: {transactionsError}
+                </div>
+            );
         }
         if (!block) {
-            return <div>Block not found</div>;
+            return <div>{t("common.blockDetails")}: {t("blockDetail.noTransactions")}</div>;
         }
         let txs = transactions;
         if (!txs) {
@@ -108,19 +118,25 @@ export default function BlockDetail({ hash }: { hash: string }) {
             <div className="max-w-7xlspace-y-4">
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Summary</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">{t("blockDetail.summary")}</h2>
 
                     <div className="flex flex-row gap-2 mb-2 w-full">
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold block text-center">Block Height</label>
+                            <label className="text-lg font-bold block text-center">
+                                {t("blockDetail.blockHeight")}
+                            </label>
                             <p className="text-center">#{block.height.toLocaleString()}</p>
                         </div>
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold block text-center">Timestamp</label>
+                            <label className="text-lg font-bold block text-center">
+                                {t("blockDetail.timestamp")}
+                            </label>
                             <p className="text-center">{new Date(block.timestamp).toLocaleString()}</p>
                         </div>
                         <div className="basis-1/3">
-                            <label className="text-lg font-bold block text-center">Transactions</label>
+                            <label className="text-lg font-bold block text-center">
+                                {t("blockDetail.transactions")}
+                            </label>
                             <p className="text-center">{block.tx_count} txs</p>
                         </div>
                     </div>
@@ -128,10 +144,14 @@ export default function BlockDetail({ hash }: { hash: string }) {
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Block Information</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        {t("blockDetail.blockInformation")}
+                    </h2>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Block Hash</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.blockHash")}
+                        </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
                             {block.hash}
                             <CopyToClipboard text={block.hash} />
@@ -139,7 +159,9 @@ export default function BlockDetail({ hash }: { hash: string }) {
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Parent Hash</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.parentHash")}
+                        </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
                             <Link href={`/block/${block.parent_hash}`} className="hover:opacity-80 transition-opacity">
                                 {block.parent_hash}
@@ -149,7 +171,9 @@ export default function BlockDetail({ hash }: { hash: string }) {
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Author</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.author")}
+                        </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
                             0x{block.author}
                             <CopyToClipboard text={"0x" + block.author} />
@@ -157,7 +181,9 @@ export default function BlockDetail({ hash }: { hash: string }) {
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">State Root</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.stateRoot")}
+                        </label>
                         <p className="basis-2/3 font-mono text-sm text-right">
                             0x{block.state_root}
                             <CopyToClipboard text={"0x" + block.state_root} />
@@ -165,45 +191,65 @@ export default function BlockDetail({ hash }: { hash: string }) {
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Timestamp</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.timestamp")}
+                        </label>
                         <p className="basis-2/3 text-right">{new Date(block.timestamp).toLocaleString()}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Protocol Version</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.protocolVersion")}
+                        </label>
                         <p className="basis-2/3 text-right">v{block.protocol_version}</p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Finalized</label>
-                        <p className={`basis-2/3 text-right ${block.is_finalized ? "text-green-500" : "text-red-500"}`}>{block.is_finalized ? "TRUE" : "FALSE"}</p>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.finalized")}
+                        </label>
+                        <p
+                            className={`basis-2/3 text-right ${
+                                block.is_finalized ? "text-green-500" : "text-red-500"
+                            }`}
+                        >
+                            {block.is_finalized ? t("blockDetail.trueLabel") : t("blockDetail.falseLabel")}
+                        </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
-                        <label className="basis-1/3 text-lg font-bold">Transaction Count</label>
+                        <label className="basis-1/3 text-lg font-bold">
+                            {t("blockDetail.transactionCount")}
+                        </label>
                         <p className="basis-2/3 text-right">{block.tx_count}</p>
                     </div>
                 </div>
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
                     <h2 className="text-2xl font-bold mb-4 ml-2">
-                        Transactions
+                        {t("blockDetail.transactionsTitle")}
                         (<span className="font-mono">{txs.length.toString()}</span>)
                     </h2>
 
                     <div className="flex flex-row justify-center gap-2 mb-4 w-full px-4 text-center">
 
                         {txs.length === 0 && (
-                            <p>No transactions found this block.</p>
+                            <p>{t("blockDetail.noTransactions")}</p>
                         )}
 
                         {txs.length > 0 && (
                             <ol className="w-full">
                                 <li className="p-2 border border-gray-200 dark:border-gray-700 rounded-t-lg">
                                     <dl className="grid grid-cols-6 gap-1">
-                                        <dt className="col-span-1 font-bold">Index</dt>
-                                        <dd className="col-span-4 font-bold">Hash</dd>
-                                        <dd className="col-span-1 font-bold">Status</dd>
+                                        <dt className="col-span-1 font-bold">
+                                            {t("blockDetail.index")}
+                                        </dt>
+                                        <dd className="col-span-4 font-bold">
+                                            {t("blockDetail.hash")}
+                                        </dd>
+                                        <dd className="col-span-1 font-bold">
+                                            {t("blockDetail.status")}
+                                        </dd>
                                     </dl>
                                 </li>
                                 {txs.map((tx) => (
@@ -239,8 +285,14 @@ export default function BlockDetail({ hash }: { hash: string }) {
                                 onClick={() => setIsLedgerParamsExpanded(!isLedgerParamsExpanded)}
                                 className="w-full text-lg font-bold block mb-1 bg-gray-100 dark:bg-gray-800 py-2 px-4 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded-t-lg"
                             >
-                                <span>Ledger Parameters ({block.ledger_parameters ? block.ledger_parameters.length.toLocaleString() : "0"} bytes)</span>
-                                <span className="text-sm">{isLedgerParamsExpanded ? "▼" : "▶"}</span>
+                                <span>
+                                    {t("blockDetail.ledgerParameters")} (
+                                    {block.ledger_parameters
+                                        ? block.ledger_parameters.length.toLocaleString()
+                                        : "0"}{" "}
+                                    {t("blockDetail.bytesSuffix")})
+                                </span>
+                                <span className="text-sm">{isLedgerParamsExpanded ? "▼" : "▲"}</span>
                             </button>
                             {isLedgerParamsExpanded && (
                                 <p className="break-all text-xs font-mono p-4">{block.ledger_parameters}</p>
@@ -254,8 +306,8 @@ export default function BlockDetail({ hash }: { hash: string }) {
                                 onClick={() => setIsRawDataExpanded(!isRawDataExpanded)}
                                 className="w-full text-lg font-bold block mb-1 bg-gray-100 dark:bg-gray-800 py-2 px-4 flex items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded-t-lg"
                             >
-                                <span>Raw Data</span>
-                                <span className="text-sm">{isRawDataExpanded ? "▼" : "▶"}</span>
+                                <span>{t("blockDetail.rawData")}</span>
+                                <span className="text-sm">{isRawDataExpanded ? "▼" : "▲"}</span>
                             </button>
                             {isRawDataExpanded && (
                                 <div className="break-all text-xs font-mono p-4 overflow-x-auto">
@@ -272,7 +324,7 @@ export default function BlockDetail({ hash }: { hash: string }) {
 
     return (
         <div>
-            <Suspense fallback={<div>Loading...</div>}>{content()}</Suspense>
+            <Suspense fallback={<div>{t("common.loading")}</div>}>{content()}</Suspense>
         </div>
     );
 }

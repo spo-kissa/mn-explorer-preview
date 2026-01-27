@@ -2,6 +2,7 @@
 
 import { Stats as StatsType } from "@/app/hooks/useStatsWebSocket";
 import IconCard from "./IconCard";
+import { useI18n } from "@/i18n";
 
 const toDataUri = (svg: string) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 
@@ -30,26 +31,29 @@ const contractIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none
 
 export default function Stats({ stats }: { stats?: StatsType | undefined }) {
 
+    const { t } = useI18n();
+    const na = t("stats.notAvailable");
+
     return (
         <div className="w-full flex flex-row gap-2 items-center mb-10">
             <IconCard 
-                title="Latest Block" 
-                value={(stats?.latestBlockHeight?.toLocaleString() ?? 'N/A')} 
+                title={t("stats.latestBlock")}
+                value={(stats?.latestBlockHeight?.toLocaleString() ?? na)} 
                 icon={toDataUri(latestBlockIcon)}
             />
             <IconCard 
-                title="Indexed Blocks" 
-                value={(stats?.indexedBlocks?.toLocaleString() ?? 'N/A')} 
+                title={t("stats.indexedBlocks")}
+                value={(stats?.indexedBlocks?.toLocaleString() ?? na)} 
                 icon={toDataUri(indexedBlocksIcon)}
             />
             <IconCard 
-                title="Total Transactions" 
-                value={(stats?.totalTransactions?.toLocaleString() ?? 'N/A')} 
+                title={t("stats.totalTransactions")}
+                value={(stats?.totalTransactions?.toLocaleString() ?? na)} 
                 icon={toDataUri(txIcon)}
             />
             <IconCard 
-                title="Total Contracts" 
-                value={(stats?.totalContracts?.toLocaleString() ?? 'N/A')} 
+                title={t("stats.totalContracts")}
+                value={(stats?.totalContracts?.toLocaleString() ?? na)} 
                 icon={toDataUri(contractIcon)}
             />
         </div>

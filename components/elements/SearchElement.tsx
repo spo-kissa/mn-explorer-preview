@@ -4,8 +4,10 @@ import { useRef, useEffect } from "react";
 import Link from "next/link";
 import SearchBox from "./SearchBox";
 import useSearch from "@/app/hooks/useSearch";
+import { useI18n } from "@/i18n";
 
 export default function SearchElement() {
+    const { t } = useI18n();
     const { search, result, isLoading, error, clearResult } = useSearch();
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ export default function SearchElement() {
                 >
                     {isLoading && (
                         <div className="p-2 text-center text-sm text-gray-500 dark:text-gray-400">
-                            Searching...
+                            {t("search.searching")}
                         </div>
                     )}
 
@@ -61,7 +63,7 @@ export default function SearchElement() {
 
                     {result && !isLoading && result.error && (
                         <div className="p-2 text-center text-sm text-red-500 dark:text-red-400">
-                            {result.error || "Invalid query"}
+                            {result.error || t("search.invalidQuery")}
                         </div>
                     )}
 
@@ -69,7 +71,7 @@ export default function SearchElement() {
                         
                         <div key={block.hash} className="p-2">
                             <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                                Block Found
+                                {t("search.blockFound")}
                             </div>
                             <Link 
                                 href={`/block/${block.hash}`}
@@ -78,13 +80,13 @@ export default function SearchElement() {
                             >
                                 <div className="flex flex-col gap-1">
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        Height: #{block.height.toLocaleString()}
+                                        {t("search.height")}: #{block.height.toLocaleString()}
                                     </div>
                                     <div className="text-xs font-mono text-gray-900 dark:text-gray-100">
                                         Hash: {block.hash}
                                     </div>
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        Transactions: {block.tx_count}
+                                        {t("search.transactions")}: {block.tx_count}
                                     </div>
                                 </div>
                             </Link>
@@ -95,7 +97,7 @@ export default function SearchElement() {
 
                         <div key={tx.hash} className="p-4">
                             <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                                Transaction Found
+                                {t("search.transactionFound")}
                             </div>
                             <Link 
                                 href={`/transaction/${tx.hash}`}
@@ -107,7 +109,7 @@ export default function SearchElement() {
                                         Hash: {tx.hash}
                                     </div>
                                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                                        Block: #{tx.block_height.toLocaleString()}
+                                        {t("search.block")}: #{tx.block_height.toLocaleString()}
                                     </div>
                                 </div>
                             </Link>

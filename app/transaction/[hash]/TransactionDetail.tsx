@@ -7,20 +7,26 @@ import Link from "next/link";
 import useGetTransactionByHash from "@/app/hooks/useGetTransactionByHash";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import TransactionIO from "@/components/elements/TransactionIO";
+import { useI18n } from "@/i18n";
 
 export default function TransactionDetail({ hash }: { hash: string }) {
 
+    const { t } = useI18n();
     const { transaction, isLoading, error, refetch } = useGetTransactionByHash(hash);
     
     const content = () => {
         if (isLoading) {
-            return <div>Loading...</div>;
+            return <div>{t("common.loading")}</div>;
         }
         if (error) {
-            return <div>Error: {error}</div>;
+            return (
+                <div>
+                    {t("common.error")}: {error}
+                </div>
+            );
         }
         if (!transaction) {
-            return <div>Transaction not found</div>;
+            return <div>{t("transactionDetail.notFound")}</div>;
         }
 
         const tx = transaction;
@@ -29,11 +35,13 @@ export default function TransactionDetail({ hash }: { hash: string }) {
             <>
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
                     
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Summary</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        {t("transactionDetail.summary")}
+                    </h2>
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Transaction Hash
+                            {t("transactionDetail.transactionHash")}
                         </label>
                         <p className="basis-2/3 font-mono text-right">
                             <span className="mr-1">{tx.hash}</span>
@@ -43,7 +51,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Block Hash
+                            {t("transactionDetail.blockHash")}
                         </label>
                         <p className="basis-2/3 font-mono text-right">
                             <span className="mr-1">
@@ -57,7 +65,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Block Height
+                            {t("transactionDetail.blockHeight")}
                         </label>
                         <p className="basis-2/3 text-right">
                             #{tx.block_height.toLocaleString()}
@@ -66,7 +74,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Index in Block
+                            {t("transactionDetail.indexInBlock")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {(tx.index_in_block + 1)}
@@ -75,7 +83,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Timestamp
+                            {t("transactionDetail.timestamp")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {new Date(tx.timestamp).toLocaleString()}
@@ -84,7 +92,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Status
+                            {t("transactionDetail.status")}
                         </label>
                         <p className={`basis-2/3 text-right ${tx.status === "SUCCESS" ? "text-green-500" : "text-red-500"}`}>
                             {tx.status}
@@ -93,16 +101,22 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Shielded
+                            {t("transactionDetail.shielded")}
                         </label>
-                        <p className={`basis-2/3 text-right ${tx.is_shielded ? "text-green-500" : "text-red-500"}`}>
-                            {tx.is_shielded ? "TRUE" : "FALSE"}
+                        <p
+                            className={`basis-2/3 text-right ${
+                                tx.is_shielded ? "text-green-500" : "text-red-500"
+                            }`}
+                        >
+                            {tx.is_shielded
+                                ? t("transactionDetail.trueLabel")
+                                : t("transactionDetail.falseLabel")}
                         </p>
                     </div>
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Transaction ID
+                            {t("transactionDetail.transactionId")}
                         </label>
                         <p className="basis-2/3 text-right">
                             #{tx.transaction_id.toLocaleString()}
@@ -111,7 +125,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Protocol Version
+                            {t("transactionDetail.protocolVersion")}
                         </label>
                         <p className="basis-2/3 text-right">
                             v{tx.protocol_version}
@@ -120,7 +134,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Total Input
+                            {t("transactionDetail.totalInput")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {formatLovelace(tx.unshielded_total_input)}
@@ -129,7 +143,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Total Output
+                            {t("transactionDetail.totalOutput")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {formatLovelace(tx.unshielded_total_output)}
@@ -138,7 +152,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            Start Index
+                            {t("transactionDetail.startIndex")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {tx.start_index.toLocaleString()}
@@ -147,7 +161,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     <div className="flex flex-row gap-2 mb-2 w-full px-4">
                         <label className="basis-1/3 text-lg font-bold">
-                            End Index
+                            {t("transactionDetail.endIndex")}
                         </label>
                         <p className="basis-2/3 text-right">
                             {tx.end_index.toLocaleString()}
@@ -161,7 +175,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         <div className="gap-2">
 
                             <h3 className="text-lg font-bold p-2 mb-4">
-                                Inputs
+                                {t("transactionDetail.inputs")}
                                 <span className="ml-1 font-mono">
                                     ({tx.transaction_outputs.length})
                                 </span>
@@ -178,7 +192,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                         <div className="gap-2">
 
                             <h3 className="text-lg font-bold p-2 mb-4">
-                                Outputs
+                                {t("transactionDetail.outputs")}
                                 <span className="ml-1 font-mono">
                                     ({tx.transaction_inputs.length})
                                 </span>
@@ -198,7 +212,9 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                 {tx.identifiers.length > 0 && (
                     <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                        <h2 className="text-2xl font-bold mb-4 ml-2">Identifiers</h2>
+                        <h2 className="text-2xl font-bold mb-4 ml-2">
+                            {t("transactionDetail.identifiers")}
+                        </h2>
 
                         <div className="flex flex-col gap-4 mb-4 w-full px-4">
 
@@ -224,7 +240,9 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Raw Data</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        {t("transactionDetail.rawData")}
+                    </h2>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <p className="break-all font-mono text-xs">
@@ -236,7 +254,9 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
-                    <h2 className="text-2xl font-bold mb-4 ml-2">Block Ledger Parameters</h2>
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        {t("transactionDetail.blockLedgerParameters")}
+                    </h2>
 
                     <div className="flex flex-row gap-2 mb-4 w-full px-4">
                         <p className="break-all font-mono text-xs">
@@ -251,7 +271,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
     return (
         <div>
-            <Suspense fallback={<div>Loading...</div>}>{content()}</Suspense>
+            <Suspense fallback={<div>{t("common.loading")}</div>}>{content()}</Suspense>
         </div>
     );
 }

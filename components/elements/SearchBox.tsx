@@ -1,14 +1,25 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-
-const searchTypes = ["All", "Hash", "Height", "Address", "Contracts"];
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useI18n } from "@/i18n";
 
 interface SearchBoxProps {
     onSearch?: (type: string, query: string) => void;
 }
 
 export default function SearchBox({ onSearch }: SearchBoxProps) {
+    const { t } = useI18n();
+    const searchTypes = useMemo(
+        () => [
+            { key: "All", label: t("search.typeAll") },
+            { key: "Hash", label: t("search.typeHash") },
+            { key: "Height", label: t("search.typeHeight") },
+            { key: "Address", label: t("search.typeAddress") },
+            { key: "Contracts", label: t("search.typeContracts") },
+        ],
+        [t],
+    );
+
     const [isOpen, setIsOpen] = useState(false);
     const [selectedType, setSelectedType] = useState("All");
     const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +57,10 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                     onClick={() => setIsOpen(!isOpen)}
                     className="flex items-center justify-center gap-1 px-3 py-2 text-sm rounded-l-md border-[1px] border-r-0 border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:ring-opacity-50 focus:z-10 dark:bg-zinc-900 dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
-                    <span>{selectedType}</span>
+                    <span>
+                        {searchTypes.find((tItem) => tItem.key === selectedType)?.label ??
+                            selectedType}
+                    </span>
                     <svg
                         className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`}
                         fill="none"
@@ -69,7 +83,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                                 key={type}
                                 type="button"
                                 onClick={() => {
-                                    setSelectedType(type);
+                                    setSelectedType(type.key);
                                     setIsOpen(false);
                                     // 入力ボックスにフォーカス
                                     setTimeout(() => {
@@ -80,7 +94,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                                     selectedType === type ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400" : ""
                                 }`}
                             >
-                                {type}
+                                {type.label}
                             </button>
                         ))}
                     </div>
@@ -109,7 +123,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                     name="query"
                     type="text"
                     autoComplete="off"
-                    placeholder="Hash / Address / TxHash / Height"
+                    placeholder={t("search.placeholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => {
@@ -127,7 +141,9 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                 onClick={handleSearch}
                 className="group flex items-center justify-center gap-2 px-5 py-2 text-sm rounded-r-md border-[1px] border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:ring-opacity-50 focus:z-10 dark:bg-zinc-900 dark:border-zinc-700 dark:hover:bg-zinc-800 whitespace-nowrap cursor-pointer"
             >
-                <span className="group-active:translate-y-[1px] transition-transform inline-block">Search</span>
+                <span className="group-active:translate-y-[1px] transition-transform inline-block">
+                    {t("search.button")}
+                </span>
             </button>
         </div>
     );
