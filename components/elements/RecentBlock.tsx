@@ -4,17 +4,9 @@ import Link from "next/link";
 import { RecentBlock as RecentBlockType } from "@/app/hooks/useStatsWebSocket";
 import CopyToClipboard from "./CopyToClipboard";
 import { useI18n } from "@/i18n";
+import DateTime from "@/components/elements/DateTime";
 
 export default function RecentBlock({ block }: { block: RecentBlockType }) {
-
-    const diffMs = (new Date()).getTime() - block.timestamp;
-    const diffSec = Math.max(0, Math.floor(diffMs / 1000));
-    const diffMin = Math.max(0, Math.floor(diffSec / 60));
-    // const diffHour = diffMin / 60;
-    // const diffDay = diffHour / 24;
-    // const diffWeek = diffDay / 7;
-    // const diffMonth = diffWeek / 4;
-    // const diffYear = diffMonth / 12;
 
     const { t } = useI18n();
     const hash = block.hash.slice(0, 14) + "..." + block.hash.slice(-10);
@@ -34,8 +26,7 @@ export default function RecentBlock({ block }: { block: RecentBlockType }) {
                     </div>
                     <div className="flex flex-col gap-2 items-end justify-end">
                         <dd className="text-mono text-xs">
-                            {t("recentBlocks.secondsAgo")
-                                .replace("{{seconds}}", diffSec.toFixed(0))}
+                            <DateTime timestamp={block.timestamp} />
                         </dd>
                         <dd className="text-mono text-xs">
                             {t("recentBlocks.txs").replace("{{count}}", block.txsCount.toString())}

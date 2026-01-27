@@ -3,29 +3,10 @@
 import { RecentTransaction as RecentTransactionType } from "@/app/hooks/useStatsWebSocket";
 import Link from "next/link";
 import CopyToClipboard from "./CopyToClipboard";
-import { useI18n } from "@/i18n";
+import DateTime from "@/components/elements/DateTime";
 
 export default function RecentTransaction({ tx }: { tx: RecentTransactionType }) {
 
-    const { t } = useI18n();
-    const diffMs = (new Date()).getTime() - tx.timestamp;
-    const diffSec = Math.max(0, Math.floor(diffMs / 1000));
-    const diffMin = Math.max(0, Math.floor(diffSec / 60));
-    const diffHour = diffMin / 60;
-    const diffDay = diffHour / 24;
-    const diffWeek = diffDay / 7;
-    const diffMonth = diffWeek / 4;
-    const diffYear = diffMonth / 12;
-
-    const timestamp =
-        diffSec < 60
-            ? t("recentTransactions.secondsAgo").replace("{{seconds}}", diffSec.toFixed(0))
-            : diffMin < 60
-            ? t("recentTransactions.minutesSecondsAgo")
-                  .replace("{{minutes}}", diffMin.toFixed(0))
-                  .replace("{{seconds}}", (diffSec % 60).toFixed(0))
-            : new Date(tx.timestamp).toLocaleString();
-    
     const hash = tx.hash.slice(0, 14) + "..." + tx.hash.slice(-10);
 
     const statusColor = tx.status === "SUCCESS" ? "text-green-500" : "text-red-500";
@@ -44,7 +25,7 @@ export default function RecentTransaction({ tx }: { tx: RecentTransactionType })
                         </dd>
                     </div>
                     <div className="flex flex-col gap-2 items-end justify-end">
-                        <dd className="text-mono text-xs">{timestamp}</dd>
+                        <dd className="text-mono text-xs"><DateTime timestamp={tx.timestamp} /></dd>
                         <dd className={`text-mono text-xs ${statusColor}`}>{tx.status}</dd>
                     </div>
                 </dl>
