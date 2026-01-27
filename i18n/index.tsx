@@ -36,7 +36,6 @@ export function I18nProvider({ children, initialLocale }: I18nProviderProps) {
       messages: allMessages[locale],
       t: (path: string) => {
         const parts = path.split(".");
-        // @ts-expect-error: dynamic path access
         let current: any = allMessages[locale];
         for (const part of parts) {
           if (current == null) return path;

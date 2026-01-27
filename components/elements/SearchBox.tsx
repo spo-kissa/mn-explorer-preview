@@ -80,7 +80,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                     <div className="absolute left-0 top-full mt-1 w-32 bg-white border-[1px] border-gray-300 rounded-md shadow-lg z-20 dark:bg-zinc-900 dark:border-zinc-700">
                         {searchTypes.map((type) => (
                             <button
-                                key={type}
+                                key={type.key}
                                 type="button"
                                 onClick={() => {
                                     setSelectedType(type.key);
@@ -91,7 +91,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                                     }, 0);
                                 }}
                                 className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 first:rounded-t-md last:rounded-b-md dark:hover:bg-zinc-800 ${
-                                    selectedType === type ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400" : ""
+                                    selectedType === type.key ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400" : ""
                                 }`}
                             >
                                 {type.label}
