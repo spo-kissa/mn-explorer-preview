@@ -1,6 +1,8 @@
 import GetAddressByHash from "@/lib/db/GetAddressByHash";
+import GetTransactionsByAddressId from "@/lib/db/GetTransactionsByAddressId";
 import { notFound } from "next/navigation";
-import { useI18n } from "@/i18n";
+import AddressSummary from "@/components/elements/AddressSummary";
+import AddressTransaction from "@/components/elements/AddressTransaction";
 
 interface PageProps {
     params: Promise<{
@@ -18,21 +20,30 @@ export default async function AddressPage({ params }: PageProps) {
     if (!address) {
         return notFound();
     }
+
+    const transactions = await GetTransactionsByAddressId(address.id);
     
     return (
         <div className="flex min-h-full items-start justify-center bg-transparent font-sans">
             <div className="flex w-full max-w-7xl flex-col items-center justify-between py-16 pt-5 px-4 bg-transparent sm:items-start">
-                <div className="w-full">
+                <div className="w-full mb-4">
                     <h1 className="text-2xl font-bold mb-4">Address Details</h1>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="col-span-1">
-                            <h2 className="text-lg font-bold mb-2">Address</h2>
-                            <p className="text-sm text-gray-500">{address.unshielded_address}</p>
-                        </div>
-                        <div className="col-span-1">
-                            <h2 className="text-lg font-bold mb-2">Address Hex</h2>
-                            <p className="text-sm text-gray-500">{address.unshielded_address_hex}</p>
+                    <AddressSummary address={address} />
+
+                </div>
+                <div className="w-full">
+                    <div className="">
+                        <h2 className="text-lg font-bold mb-2">Transactions</h2>
+                        <div>
+                            <div className="grid grid-cols-12 w-full border border-gray-200 dark:border-gray-700 p-3 px-4">
+                                <h2 className="text-sm font-bold col-span-1 text-center">No.</h2>
+                                <h2 className="text-sm font-bold col-span-8 text-cetner">Hash</h2>
+                                <h2 className="text-sm font-bold col-span-3 text-center">Timestamp</h2>
+                            </div>
+                            {transactions.map((tx, index) => (
+                                <AddressTransaction key={tx.id} index={index} transaction={tx} />
+                            ))}
                         </div>
                     </div>
                 </div>
