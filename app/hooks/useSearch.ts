@@ -3,10 +3,12 @@
 import { useState, useCallback, useRef } from "react";
 import { Block } from "@/lib/db/GetBlockByHash";
 import { Transaction } from "@/lib/db/GetTransactionByHash";
+import { AddressForSearch } from "@/types/address";
 
 export interface SearchResult {
     blocks: Block[];
     transactions: Transaction[];
+    addresses: AddressForSearch[];
     error: boolean;
 }
 

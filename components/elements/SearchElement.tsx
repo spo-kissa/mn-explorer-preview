@@ -67,6 +67,28 @@ export default function SearchElement() {
                         </div>
                     )}
 
+                    {result && !isLoading && result.addresses.length > 0 && result.addresses.map((address) => (
+                        <div key={address.id} className="p-2">
+                            <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                {t("search.addressFound")}
+                            </div>
+                            <Link 
+                                href={`/address/${address.unshielded_address_hex}`}
+                                className="block p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                                onClick={clearResult}
+                            >
+                                <div className="flex flex-col gap-1">
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                        {t("search.address")}: {address.unshielded_address}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                                        {t("search.addressHex")}: {address.unshielded_address_hex}
+                                    </div>
+                                </div>
+                            </Link>
+                        </div>
+                    ))}
+
                     {result && !isLoading && result.blocks.length > 0 && result.blocks.map((block) => (
                         
                         <div key={block.hash} className="p-2">
