@@ -1,4 +1,5 @@
 
+export type TxId = number;
 
 export interface TransactionIdentifier {
     tx_hash: string;
@@ -48,6 +49,16 @@ export interface TransactionOutput {
     spent_at_transaction_hash: string;
 }
 
+
+export interface DustLedgerEvent {
+    id: number;
+    tx_id: number;
+    index_in_tx: number;
+    event_id: number;
+    event_name: string | null;
+    event_raw: string;
+    output_nonce: string | null;
+}
 
 export interface Transaction {
     id: number;

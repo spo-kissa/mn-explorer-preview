@@ -2,18 +2,25 @@
 
 import { Suspense } from "react";
 import { formatLovelace } from "@/lib/lovelace";
-import { tokenTypeToName, TokenTypes } from "@/lib/converter";
 import Link from "next/link";
 import useGetTransactionByHash from "@/app/hooks/useGetTransactionByHash";
+import useDustLedgerEventsByTxId from "@/app/hooks/useDustLedgerEventsByTxId";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 import TransactionIO from "@/components/elements/TransactionIO";
 import { useI18n } from "@/i18n";
+import type { TxId } from "@/types/transaction";
 
 export default function TransactionDetail({ hash }: { hash: string }) {
 
     const { t } = useI18n();
-    const { transaction, isLoading, error, refetch } = useGetTransactionByHash(hash);
-    
+    const { transaction, isLoading, error } = useGetTransactionByHash(hash);
+    const txId: TxId | null = transaction?.transaction_id ?? null;
+    const {
+        dustLedgerEvents,
+        isLoading: dustLedgerEventsLoading,
+        error: dustLedgerEventsError,
+    } = useDustLedgerEventsByTxId(txId);
+
     const content = () => {
         if (isLoading) {
             return <div>{t("common.loading")}</div>;
@@ -237,6 +244,65 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                     </div>
                 )}
+
+                <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
+
+                    <h2 className="text-2xl font-bold mb-4 ml-2">
+                        {t("transactionDetail.dustLedgerEvents")}
+                    </h2>
+
+                    {dustLedgerEventsLoading && (
+                        <div className="px-4 text-gray-500 dark:text-gray-400">
+                            {t("transactionDetail.dustLedgerEventsLoading")}
+                        </div>
+                    )}
+                    {dustLedgerEventsError && (
+                        <div className="px-4 text-red-500">
+                            {dustLedgerEventsError}
+                        </div>
+                    )}
+                    {!dustLedgerEventsLoading && !dustLedgerEventsError && (!dustLedgerEvents || dustLedgerEvents.length === 0) && (
+                        <div className="px-4 text-gray-500 dark:text-gray-400">
+                            {t("transactionDetail.dustLedgerEventsEmpty")}
+                        </div>
+                    )}
+                    {!dustLedgerEventsLoading && !dustLedgerEventsError && dustLedgerEvents && dustLedgerEvents.length > 0 && (
+                        <div className="flex flex-col gap-4 mb-4 w-full px-4">
+                            {dustLedgerEvents.map((event) => (
+                                <div
+                                    key={event.id}
+                                    className="flex flex-col gap-2 p-3 border border-gray-200 dark:border-gray-700 rounded-md"
+                                >
+                                    <div className="flex flex-row gap-2">
+                                        <span className="font-bold basis-1/4">index</span>
+                                        <span className="font-mono text-sm basis-3/4">{(event.index_in_tx + 1).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex flex-row gap-2">
+                                        <span className="font-bold basis-1/4">event_id</span>
+                                        <span className="font-mono text-sm basis-3/4">{event.event_id}</span>
+                                    </div>
+                                    {event.event_name != null && (
+                                        <div className="flex flex-row gap-2">
+                                            <span className="font-bold basis-1/4">event_name</span>
+                                            <span className="font-mono text-sm basis-3/4">{event.event_name}</span>
+                                        </div>
+                                    )}
+                                    <div className="flex flex-row gap-2">
+                                        <span className="font-bold basis-1/4">event_raw</span>
+                                        <p className="break-all font-mono text-xs basis-3/4">{event.event_raw}</p>
+                                    </div>
+                                    {event.output_nonce != null && (
+                                        <div className="flex flex-row gap-2">
+                                            <span className="font-bold basis-1/4">output_nonce</span>
+                                            <span className="font-mono text-sm basis-3/4 break-all">{event.output_nonce}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                </div>
 
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
