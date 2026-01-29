@@ -21,6 +21,7 @@ export interface TransactionInput {
     spent_at_transaction_id: number;
     spent_at_transaction_index: number;
     account_addr: string;
+    address_hex: string;
     value: number;
     shielded: boolean;
     initial_nonce: string;
@@ -31,33 +32,25 @@ export default async function GetTransactionInputByTxId(txId: number)
 : Promise<TransactionInput[]> {
 
     const inputs = await prisma.tx_inputs.findMany({
-        where: { tx_id: txId },
-        select: {
-            index: true,
-            prev_tx_hash: true,
-            prev_tx_output_ix: true,
-            prev_output_id: true,
-            raw: true,
-            address_id: true,
-            created_at_tx_hash: true,
-            spent_at_tx_hash: true,
-            intent_hash: true,
-            ctime: true,
-            registered_for_dust_generation: true,
-            token_type: true,
-            spent_at_transaction_id: true,
-            spent_at_transaction_hash: true,
-            account_addr: true,
-            value: true,
-            shielded: true,
-            initial_nonce: true
+        where: {
+            tx_id: txId,
+        },
+        // You can't use both `select` and `include` in the same Prisma query.
+        // To fetch address info, use `include` only, and access all needed input fields directly (no select).
+        include: {
+            addresses: {
+                select: {
+                    unshielded_address: true,
+                    unshielded_address_hex: true,
+                }
+            }
         },
         orderBy: {
             index: "asc"
         }
     });
 
-    if (!inputs) {
+    if (!inputs || inputs.length === 0) {
         return [];
     }
 
@@ -81,6 +74,7 @@ export default async function GetTransactionInputByTxId(txId: number)
             shielded: normalizeBoolean(input.shielded),
             initial_nonce: input.initial_nonce,
             raw: normalizeObject(input.raw),
+            address_hex: input.addresses?.unshielded_address_hex,
 
             token_type_name: '',
             spent_at_transaction_index: 0,

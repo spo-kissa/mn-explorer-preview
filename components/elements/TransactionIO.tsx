@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
 import { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 import { TokenTypes, tokenTypeToName } from "@/lib/converter";
@@ -13,7 +14,9 @@ export default function TransactionIO({ io }: { io: TransactionIO }) {
                 #{io.index}
             </div>
             <div className="w-full mb-2">
-                <span className="font-mono text-xs">{io.account_addr}</span>
+                <Link href={`/address/${io.address_hex}`}>
+                    <span className="font-mono text-xs">{io.account_addr}</span>
+                </Link>
                 <CopyToClipboard text={io.account_addr} />
             </div>
             <div className="w-full grid grid-cols-3">

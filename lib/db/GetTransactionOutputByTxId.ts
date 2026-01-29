@@ -7,6 +7,7 @@ import { hashToPrefix } from "@/lib/converter";
 export interface TransactionOutput {
     index: number;
     account_addr: string;
+    address_hex: string;
     asset_id: string;
     value: number;
     shielded: boolean;
@@ -31,32 +32,22 @@ export default async function GetTransactionOutputByTxId(txId: number)
 : Promise<TransactionOutput[]> {
 
     const outputs = await prisma.tx_outputs.findMany({
-        where: { tx_id: txId },
-        select: {
-            index: true,
-            account_addr: true,
-            asset_id: true,
-            value: true,
-            shielded: true,
-            note_commitment: true,
-            raw: true,
-            address_id: true,
-            created_at_tx_hash: true,
-            spent_at_tx_hash: true,
-            intent_hash: true,
-            ctime: true,
-            initial_nonce: true,
-            registered_for_dust_generation: true,
-            token_type: true,
-            spent_at_transaction_id: true,
-            spent_at_transaction_hash: true,
+        where: {
+            tx_id: txId
+        },
+        include: {
+            addresses: {
+                select: {
+                    unshielded_address_hex: true,
+                }
+            }
         },
         orderBy: {
             index: 'asc',
         },
     });
 
-    if (!outputs) {
+    if (!outputs || outputs.length === 0) {
         return [];
     }
 
@@ -79,6 +70,7 @@ export default async function GetTransactionOutputByTxId(txId: number)
             token_type: output.token_type,
             spent_at_transaction_id: Number(output.spent_at_transaction_id),
             spent_at_transaction_hash: hashToPrefix(output.spent_at_transaction_hash),
+            address_hex: output.addresses?.unshielded_address_hex,
         } as TransactionOutput;
     });
 
