@@ -1,10 +1,29 @@
 import TransactionDetail from "./TransactionDetail";
+import GetTransactionByHash from "@/lib/db/GetTransactionByHash";
+import type { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{
         hash: string;
     }> | {
         hash: string;
+    };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const resolvedParams = await Promise.resolve(params);
+    const hash = resolvedParams.hash;
+    const transaction = await GetTransactionByHash(hash);
+
+    if (!transaction) {
+        return {
+            title: "Transaction Not Found - mn-explorer - (Explorer for Midnight Network Preview)",
+        };
+    }
+
+    return {
+        title: `Transaction ${hash.slice(0, 8)}...${hash.slice(-8)} - mn-explorer - (Explorer for Midnight Network Preview)`,
+        description: `Transaction details for ${hash} (Block #${transaction.block_height})`,
     };
 }
 

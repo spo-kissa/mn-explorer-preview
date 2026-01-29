@@ -1,4 +1,10 @@
 import Home from "@/components/layouts/Home";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "mn-explorer - (Explorer for Midnight Network Preview)",
+  description: "Explorer for Midnight Network Preview",
+};
 
 export default async function Page() {
 

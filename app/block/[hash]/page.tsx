@@ -1,10 +1,29 @@
 import BlockDetail from "./BlockDetail";
+import GetBlockByHash from "@/lib/db/GetBlockByHash";
+import type { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{
         hash: string;
     }> | {
         hash: string;
+    };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const resolvedParams = await Promise.resolve(params);
+    const hash = resolvedParams.hash;
+    const block = await GetBlockByHash(hash);
+
+    if (!block) {
+        return {
+            title: "Block Not Found - mn-explorer - (Explorer for Midnight Network Preview)",
+        };
+    }
+
+    return {
+        title: `Block #${block.height} - mn-explorer - (Explorer for Midnight Network Preview)`,
+        description: `Block details for height ${block.height} (${hash.slice(0, 8)}...${hash.slice(-8)})`,
     };
 }
 

@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeRaw, normalizeId, normalizeObject } from "@/lib/converter";
+import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeId, normalizeObject } from "@/lib/converter";
 
 /**
  * Transaction Input

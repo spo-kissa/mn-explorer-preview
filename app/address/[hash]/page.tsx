@@ -3,12 +3,30 @@ import GetTransactionsByAddressId from "@/lib/db/GetTransactionsByAddressId";
 import { notFound } from "next/navigation";
 import AddressSummary from "@/components/elements/AddressSummary";
 import AddressTransaction from "@/components/elements/AddressTransaction";
+import type { Metadata } from "next";
 
 interface PageProps {
     params: Promise<{
         hash: string;
     }> | {
         hash: string;
+    };
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const resolvedParams = await Promise.resolve(params);
+    const hash = resolvedParams.hash;
+    const address = await GetAddressByHash(hash);
+
+    if (!address) {
+        return {
+            title: "Address Not Found - mn-explorer - (Explorer for Midnight Network Preview)",
+        };
+    }
+
+    return {
+        title: `Address ${hash.slice(0, 8)}...${hash.slice(-8)} - mn-explorer - (Explorer for Midnight Network Preview)`,
+        description: `Address details for ${hash}`,
     };
 }
 
