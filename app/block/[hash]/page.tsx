@@ -10,6 +10,9 @@ interface PageProps {
     };
 }
 
+/**
+ * メタデータを生成する関数
+ */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const resolvedParams = await Promise.resolve(params);
     const hash = resolvedParams.hash;
@@ -24,6 +27,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
         title: `Block #${block.height} - mn-explorer - (Explorer for Midnight Network Preview)`,
         description: `Block details for height ${block.height} (${hash.slice(0, 8)}...${hash.slice(-8)})`,
+        openGraph: {
+            title: `Block #${block.height} - mn-explorer - (Explorer for Midnight Network Preview)`,
+            description: `Block details for height ${block.height} (${hash})`,
+            images: [],
+            url: `${process.env.NEXT_PUBLIC_APP_URL}/block/${hash}`,
+            siteName: "mn-explorer",
+            type: "website",
+            locale: "en_US",
+            alternateLocale: ["ja_JP"],
+        },
     };
 }
 
