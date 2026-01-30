@@ -27,14 +27,14 @@ export default function BlockDetail({ hash }: { hash: string }) {
                 if (typeof prepared.header.digest === "string") {
                     try {
                         prepared.header.digest = JSON.parse(prepared.header.digest);
-                    } catch (e) {
+                    } catch {
                         // パースに失敗した場合はそのまま
                     }
                 }
                 if (typeof prepared.header.header === "string") {
                     try {
                         prepared.header.header = JSON.parse(prepared.header.header);
-                    } catch (e) {
+                    } catch {
                         // パースに失敗した場合はそのまま
                     }
                 }
