@@ -1,5 +1,6 @@
 import { isHash } from "@/lib/query";
 import BigNumber from "bignumber.js";
+import * as runtime from "@prisma/client/runtime/client.js";
 
 /**
  * ハッシュの先頭に0xを追加する
@@ -77,8 +78,11 @@ export function normalizeId(id: number | bigint | null): number {
  * @param index インデックス
  * @returns 正規化されたインデックス
  */
-export function normalizeIndex(index: number): number {
-    if (index < 0) {
+export function normalizeIndex(index: number | null, allowNull: boolean = false): number | null {
+    if (index === null || index < 0) {
+        if (allowNull) {
+            return null;
+        }
         throw new Error("Index must be greater than 0");
     }
     return Number(index);
@@ -89,14 +93,20 @@ export function normalizeIndex(index: number): number {
  * @param amount 金額
  * @returns 正規化された金額
  */
-export function normalizeAmount(amount: BigNumber | number | { toNumber: () => number } | null): number {
+export function normalizeAmount(amount: BigNumber | number | { toNumber: () => number } | null, allowNull: boolean = false): number | null {
     if (amount === null) {
+        if (allowNull) {
+            return null;
+        }
         throw new Error("Amount must be greater than 0");
     }
     // PrismaのDecimal型やtoNumberメソッドを持つオブジェクトの場合
     if (typeof amount === 'object' && amount !== null && 'toNumber' in amount && typeof amount.toNumber === 'function') {
         const num = amount.toNumber();
         if (num < 0) {
+            if (allowNull) {
+                return null;
+            }
             throw new Error("Amount must be greater than 0");
         }
         return num;
@@ -105,9 +115,15 @@ export function normalizeAmount(amount: BigNumber | number | { toNumber: () => n
     // numberの場合
     if (typeof amount === 'number') {
         if (amount < 0) {
+            if (allowNull) {
+                return null;
+            }
             throw new Error("Amount must be greater than 0");
         }
         return Number(amount);
+    }
+    if (allowNull) {
+        return null;
     }
     throw new Error("Amount must be a number, BigNumber, or Decimal");
 }
@@ -160,11 +176,11 @@ export function normalizeRaw(raw: string | null): string {
  * @param object オブジェクト
  * @returns 正規化されたオブジェクト
  */
-export function normalizeObject(object: any | null): object {
+export function normalizeObject(object: runtime.JsonValue | object | null): object {
     if (object === null || object === undefined || typeof object !== 'object') {
-        return {};
+        return {} as object;
     }
-    return object;
+    return object as object;
 }
 
 
@@ -186,14 +202,24 @@ export function normalizeLedgerParameters(ledgerParameters: string | null): stri
  * @param normalizer 正規化関数
  * @returns 正規化された配列
  */
-export function normalizeArray<T>(array: T[] | null | undefined, normalizer?: (item: T) => T): T[] {
+export function normalizeArray<T>(array: T[] | null | undefined, normalizer?: (item: T) => T | null): T[] {
     if (array === null || array === undefined || !Array.isArray(array) || array.length === 0) {
         return [] as T[];
     }
     if (normalizer === null || normalizer === undefined || typeof normalizer !== 'function') {
         return array as T[];
     }
-    return array.map(item => normalizer(item));
+    return array.map(item => normalizer(item) as T) as T[];
+}
+
+export function normalizeArrayFromTo<From, To>(array: From[] | null | undefined, normalizer?: (item: From) => To): To[] {
+    if (array === null || array === undefined || !Array.isArray(array) || array.length === 0) {
+        return [] as To[];
+    }
+    if (normalizer === null || normalizer === undefined || typeof normalizer !== 'function') {
+        return array as unknown as To[];
+    }
+    return array.map(item => normalizer(item) as To) as To[];
 }
 
 /**

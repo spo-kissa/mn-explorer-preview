@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 import { TransactionInput } from "@/types/transaction";
-import { normalizeIndex, normalizeHash, normalizeTimestamp, normalizeTokenType, normalizeId, normalizeAmount, normalizeBoolean, normalizeObject } from "@/lib/converter";
+import { normalizeIndex, normalizeHash, normalizeTimestamp, normalizeTokenType, normalizeAmount, normalizeBoolean, normalizeObject } from "@/lib/converter";
 
 /**
  * 指定されたアドレスIDに関連するトランザクション入力一覧を取得する
@@ -27,7 +27,6 @@ export default async function GetTransactionInputsByAddressId(addressId: number)
             ctime: true,
             registered_for_dust_generation: true,
             token_type: true,
-            spent_at_transaction_id: true,
             spent_at_transaction_hash: true,
             account_addr: true,
             value: true,
@@ -57,7 +56,6 @@ export default async function GetTransactionInputsByAddressId(addressId: number)
             ctime: normalizeTimestamp(input.ctime),
             registered_for_dust_generation: input.registered_for_dust_generation,
             token_type: normalizeTokenType(input.token_type),
-            spent_at_transaction_id: normalizeId(input.spent_at_transaction_id),
             spent_at_transaction_hash: normalizeHash(input.spent_at_transaction_hash),
             account_addr: input.account_addr,
             value: normalizeAmount(input.value),
@@ -67,6 +65,7 @@ export default async function GetTransactionInputsByAddressId(addressId: number)
 
             token_type_name: '',
             spent_at_transaction_index: 0,
+            address_hex: null,
         } as TransactionInput;
     });
 }

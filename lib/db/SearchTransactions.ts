@@ -1,8 +1,8 @@
 import prisma from "@/lib/db";
-import { Transaction } from "@/lib/db/GetTransactionByHash";
+import { type Transaction } from "@/types/transaction";
 import { isHash } from "@/lib/query";
 import { normalizeHash } from "@/lib/converter";
-import { normalizeTransaction } from "@/lib/transaction";
+import { normalizeTransactions } from "@/lib/transaction";
 
 /**
  * トランザクションを検索します。
@@ -37,10 +37,14 @@ export default async function SearchTransactions(hash: string)
             raw: true,
             block_height: true,
             block_hash: true,
+            block_id: true,
             protocol_version: true,
             transaction_id: true,
             start_index: true,
             end_index: true,
+            fee: true,
+            paid_fees: true,
+            estimated_fees: true,
             unshielded_total_input: true,
             unshielded_total_output: true,
             block_ledger_parameters: true
@@ -51,5 +55,5 @@ export default async function SearchTransactions(hash: string)
         return [] as Transaction[];
     }
 
-    return transactions.map((tx) => normalizeTransaction(tx) as Transaction);
+    return normalizeTransactions(transactions);
 }

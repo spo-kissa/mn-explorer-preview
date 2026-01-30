@@ -1,31 +1,31 @@
 import prisma from "@/lib/db";
-import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeId, normalizeObject } from "@/lib/converter";
+import { normalizeHash, normalizeIndex, normalizeTimestamp, normalizeAmount, normalizeBoolean, normalizeTokenType, normalizeObject } from "@/lib/converter";
+import { TransactionInput } from "@/types/transaction";
 
-/**
- * Transaction Input
- */
-export interface TransactionInput {
-    index: number;
-    prev_tx_hash: string;
-    prev_tx_output_tx: number;
-    prev_output_id: number;
-    raw: object;
-    address_id: number;
-    created_at_tx_hash: string;
-    spent_at_tx_hash: string;
-    intent_hash: string;
-    ctime: number;
-    registered_for_dust_generation: boolean;
-    token_type: string;
-    token_type_name: string;
-    spent_at_transaction_id: number;
-    spent_at_transaction_index: number;
-    account_addr: string;
-    address_hex: string;
-    value: number;
-    shielded: boolean;
-    initial_nonce: string;
-}
+// /**
+//  * Transaction Input
+//  */
+// export interface TransactionInput {
+//     index: number;
+//     prev_tx_hash: string;
+//     prev_tx_output_tx: number;
+//     prev_output_id: number;
+//     raw: object;
+//     address_id: number;
+//     created_at_tx_hash: string;
+//     spent_at_tx_hash: string;
+//     intent_hash: string;
+//     ctime: number;
+//     registered_for_dust_generation: boolean;
+//     token_type: string;
+//     token_type_name: string;
+//     spent_at_transaction_index: number;
+//     account_addr: string;
+//     address_hex: string;
+//     value: number;
+//     shielded: boolean;
+//     initial_nonce: string;
+// }
 
 
 export default async function GetTransactionInputByTxId(txId: number)
@@ -67,7 +67,6 @@ export default async function GetTransactionInputByTxId(txId: number)
             ctime: normalizeTimestamp(input.ctime),
             registered_for_dust_generation: input.registered_for_dust_generation,
             token_type: normalizeTokenType(input.token_type),
-            spent_at_transaction_id: normalizeId(input.spent_at_transaction_id),
             spent_at_transaction_hash: normalizeHash(input.spent_at_transaction_hash),
             account_addr: input.account_addr,
             value: normalizeAmount(input.value),

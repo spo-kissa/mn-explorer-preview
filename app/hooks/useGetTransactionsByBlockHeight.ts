@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Transaction } from "@/lib/db/GetTransactionsByBlockHeight";
+import { Transaction } from "@/types/transaction";
 
 export interface UseGetTransactionsByBlockHeightResult {
     transactions: Transaction[] | null;
@@ -11,7 +11,9 @@ export interface UseGetTransactionsByBlockHeightResult {
 }
 
 
-export default function useGetTransactionsByBlockHeight(blockHeight: number | null = null) : UseGetTransactionsByBlockHeightResult {
+export default function useGetTransactionsByBlockHeight(blockHeight: number | null = null)
+: UseGetTransactionsByBlockHeightResult
+{
     const [transactions, setTransactions] = useState<Transaction[] | null>(blockHeight ? [] : null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

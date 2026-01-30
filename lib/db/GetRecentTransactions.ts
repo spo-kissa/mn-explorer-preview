@@ -34,6 +34,6 @@ export default async function GetRecentTransactions(count: number = 10): Promise
         timestamp: normalizeTimestamp(transaction.timestamp),
         status: normalizeStatus(transaction.status),
         block_height: normalizeHeight(transaction.block_height),
-        index_in_block: normalizeIndex(transaction.index_in_block),
+        index_in_block: normalizeIndex(transaction.index_in_block, false) ?? 0,
     }));
 }

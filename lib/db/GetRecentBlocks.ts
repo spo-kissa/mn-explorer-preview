@@ -30,6 +30,6 @@ export default async function GetRecentBlocks(count: number = 10): Promise<Recen
         height: normalizeHeight(block.height),
         hash: normalizeHash(block.hash),
         timestamp: normalizeTimestamp(block.timestamp),
-        txsCount: normalizeIndex(block.tx_count),
+        txsCount: normalizeIndex(block.tx_count, false) ?? 0,
     }));
 }

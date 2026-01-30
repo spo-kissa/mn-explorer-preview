@@ -162,7 +162,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                             {t("transactionDetail.startIndex")}
                         </label>
                         <p className="basis-2/3 text-right">
-                            {tx.start_index.toLocaleString()}
+                            {tx.start_index?.toLocaleString()}
                         </p>
                     </div>
 
@@ -171,7 +171,7 @@ export default function TransactionDetail({ hash }: { hash: string }) {
                             {t("transactionDetail.endIndex")}
                         </label>
                         <p className="basis-2/3 text-right">
-                            {tx.end_index.toLocaleString()}
+                            {tx.end_index?.toLocaleString()}
                         </p>
                     </div>
                 </div>
@@ -225,9 +225,9 @@ export default function TransactionDetail({ hash }: { hash: string }) {
 
                         <div className="flex flex-col gap-4 mb-4 w-full px-4">
 
-                            {tx.identifiers.map(id => (
+                            {tx.identifiers.map((id, index) => (
                                 
-                                <div key={id.index_in_tx} className="flex flex-row items-center gap-2 w-full px-4">
+                                <div key={index} className="flex flex-row items-center gap-2 w-full px-4">
                                     <p className="font-mono text-sm">
                                         <span className="h-[32px] w-[32px] inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md text-white">
                                             {id.index_in_tx}

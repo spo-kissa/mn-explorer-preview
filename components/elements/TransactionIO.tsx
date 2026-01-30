@@ -1,11 +1,8 @@
 import Link from "next/link";
-import { TransactionInput } from "@/lib/db/GetTransactionInputByTxId";
-import { TransactionOutput } from "@/lib/db/GetTransactionOutputByTxId";
 import { TokenTypes, tokenTypeToName } from "@/lib/converter";
 import { formatLovelace } from "@/lib/lovelace";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
-
-export type TransactionIO = TransactionInput | TransactionOutput;
+import { type TransactionIO } from "@/types/transaction";
 
 export default function TransactionIO({ io }: { io: TransactionIO }) {
     return (

@@ -1,29 +1,29 @@
 import prisma from "@/lib/db";
-import { hashToPrefix } from "@/lib/converter";
+import { normalizeHash } from "@/lib/converter";
+import { TransactionOutput } from "@/types/transaction";
 
-/**
- * Transaction Output Interface
- */
-export interface TransactionOutput {
-    index: number;
-    account_addr: string;
-    address_hex: string;
-    asset_id: string;
-    value: number;
-    shielded: boolean;
-    note_commitment: string;
-    raw: string;
-    address_id: number;
-    created_at_tx_hash: string;
-    spent_at_tx_hash: string;
-    intent_hash: string;
-    ctime: number;
-    initial_nonce: string;
-    registered_for_dust_generation: boolean;
-    token_type: string;
-    spent_at_transaction_id: number;
-    spent_at_transaction_hash: string;
-}
+// /**
+//  * Transaction Output Interface
+//  */
+// export interface TransactionOutput {
+//     index: number;
+//     account_addr: string;
+//     address_hex: string;
+//     asset_id: string;
+//     value: number;
+//     shielded: boolean;
+//     note_commitment: string;
+//     raw: string;
+//     address_id: number;
+//     created_at_tx_hash: string;
+//     spent_at_tx_hash: string;
+//     intent_hash: string;
+//     ctime: number;
+//     initial_nonce: string;
+//     registered_for_dust_generation: boolean;
+//     token_type: string;
+//     spent_at_transaction_hash: string;
+// }
 
 /**
  * Get Transaction Output by Transaction ID
@@ -61,15 +61,14 @@ export default async function GetTransactionOutputByTxId(txId: number)
             note_commitment: output.note_commitment,
             raw: output.raw,
             address_id: Number(output.address_id),
-            created_at_tx_hash: hashToPrefix(output.created_at_tx_hash),
-            spent_at_tx_hash: hashToPrefix(output.spent_at_tx_hash),
-            intent_hash: hashToPrefix(output.intent_hash),
+            created_at_tx_hash: normalizeHash(output.created_at_tx_hash),
+            spent_at_tx_hash: normalizeHash(output.spent_at_tx_hash),
+            intent_hash: normalizeHash(output.intent_hash),
             ctime: Number(output.ctime),
             initial_nonce: output.initial_nonce,
             registered_for_dust_generation: output.registered_for_dust_generation,
             token_type: output.token_type,
-            spent_at_transaction_id: Number(output.spent_at_transaction_id),
-            spent_at_transaction_hash: hashToPrefix(output.spent_at_transaction_hash),
+            spent_at_transaction_hash: normalizeHash(output.spent_at_transaction_hash),
             address_hex: output.addresses?.unshielded_address_hex,
         } as TransactionOutput;
     });

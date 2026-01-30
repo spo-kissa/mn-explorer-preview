@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Transaction } from "@/lib/db/GetTransactionByHash";
+import { Transaction } from "@/types/transaction";
 
 export interface UseGetTransactionByHashResult {
     transaction: Transaction | null;

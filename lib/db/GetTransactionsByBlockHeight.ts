@@ -1,26 +1,6 @@
 import prisma from "@/lib/db";
-import { normalizeTransaction } from "@/lib/transaction";
-
-export interface Transaction {
-    id: number;
-    hash: string;
-    index_in_block: number;
-    timestamp: number;
-    is_shielded: boolean;
-    total_input: number;
-    total_output: number;
-    status: string;
-    raw: string;
-    block_height: number;
-    block_hash: string;
-    protocol_version: number;
-    transaction_id: number;
-    start_index: number;
-    end_index: number;
-    unshielded_total_input: number;
-    unshielded_total_output: number;
-    block_ledger_parameters: string;
-}
+import { normalizeTransactions } from "@/lib/transaction";
+import { Transaction } from "@/types/transaction";
 
 export default async function GetTransactionsByBlockHeight(blockHeight: number)
 : Promise<Transaction[] | null> {
@@ -39,10 +19,14 @@ export default async function GetTransactionsByBlockHeight(blockHeight: number)
             raw: true,
             block_height: true,
             block_hash: true,
+            block_id: true,
             protocol_version: true,
             transaction_id: true,
             start_index: true,
             end_index: true,
+            fee: true,
+            paid_fees: true,
+            estimated_fees: true,
             unshielded_total_input: true,
             unshielded_total_output: true,
             block_ledger_parameters: true
@@ -53,7 +37,5 @@ export default async function GetTransactionsByBlockHeight(blockHeight: number)
         return null;
     }
 
-    return transactions.map((tx) => {
-        return normalizeTransaction(tx) as Transaction;
-    });
+    return normalizeTransactions(transactions);
 }

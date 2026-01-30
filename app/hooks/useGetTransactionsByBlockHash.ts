@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
+import { Transaction } from "@/types/transaction";
 
 export interface UseGetTransactionsByBlockHashResult {
     transactions: Transaction[] | null;
@@ -17,7 +17,7 @@ export default function useGetTransactionsByBlockHash(blockHash: string)
     const [error, setError] = useState<string | null>(null);
 
     const fetchTransactions = useCallback(async () => {
-        let hash = blockHash;
+        const hash = blockHash.trim().toLowerCase();
         if (hash.startsWith("0x")) {
         }
         if (!hash) {

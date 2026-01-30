@@ -1,12 +1,11 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { Transaction } from "@/lib/db/GetTransactionsByBlockHash";
 import Link from "next/link";
 import JsonViewer from "@/components/elements/JsonViewer";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
-import useGetBlock, { Block, UseGetBlockOptions, UseGetBlockResult } from "@/app/hooks/useGetBlock";
-import useGetTransactionsByBlockHash, { UseGetTransactionsByBlockHashResult } from "@/app/hooks/useGetTransactionsByBlockHash";
+import useGetBlock from "@/app/hooks/useGetBlock";
+import useGetTransactionsByBlockHash from "@/app/hooks/useGetTransactionsByBlockHash";
 import { useI18n } from "@/i18n";
 
 export default function BlockDetail({ hash }: { hash: string }) {
@@ -17,13 +16,13 @@ export default function BlockDetail({ hash }: { hash: string }) {
     const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
     const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
 
-    const prepareValue = (value: any): any => {
+    const prepareValue = (value: object | string): object => {
         if (value === null || value === undefined) {
-            return value;
+            return {} as object;
         }
-        if (typeof value === "object" && value.header) {
+        if (typeof value === "object" && value !== null && "header" in value) {
             // header.digestとheader.headerをパースする
-            const prepared = { ...value };
+            const prepared = value as { header: { digest: string; header: string } };
             if (prepared.header) {
                 if (typeof prepared.header.digest === "string") {
                     try {
@@ -42,47 +41,23 @@ export default function BlockDetail({ hash }: { hash: string }) {
             }
             return prepared;
         }
-        return value;
+        if (typeof value === "string") {
+            return JSON.parse(value) as object;
+        }
+        else {
+            return value as object;
+        }
     };
 
-    const formatValue = (value: any): React.ReactNode => {
+    const formatValue = (value: object | string): React.ReactNode => {
         if (value === null || value === undefined) {
             return t("stats.notAvailable");
         }
-        if (typeof value === "object") {
+        if (typeof value === "object" && value !== null) {
             const prepared = prepareValue(value);
             return <JsonViewer data={prepared} level={3} defaultExpanded={true} />;
         }
         return String(value);
-    };
-
-    const renderField = (label: string, value: any) => {
-        const formatted = formatValue(value);
-        if (typeof value === "object" && value !== null) {
-            return (
-                <div className="mb-4">
-                    <strong className="block mb-2">{label}:</strong>
-                    <div className="whitespace-pre-wrap break-words bg-gray-100 dark:bg-gray-800 p-4 rounded mt-1 text-sm overflow-x-auto font-mono">
-                        {formatted}
-                    </div>
-                </div>
-            );
-        }
-        else if (label === "Ledger Parameters") {
-            return (
-                <div className="mb-4 max-w-7xl text-wrap">
-                    <strong>{label}:</strong>
-                    <p className="p-4 break-all text-xs font-mono">
-                        {formatted}
-                    </p>
-                </div>
-            )
-        }
-        return (
-            <p className="mb-2">
-                <strong>{label}:</strong> {formatted}
-            </p>
-        );
     };
 
     const content = () => {
@@ -110,9 +85,6 @@ export default function BlockDetail({ hash }: { hash: string }) {
         if (!txs) {
             txs = [];
         }
-        
-        // blockがオブジェクトの場合、すべてのフィールドを動的に表示
-        const blockAny = block as any;
         
         return (
             <div className="max-w-7xlspace-y-4">
