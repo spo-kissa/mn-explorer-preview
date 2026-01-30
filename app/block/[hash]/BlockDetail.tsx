@@ -11,8 +11,8 @@ import { useI18n } from "@/i18n";
 export default function BlockDetail({ hash }: { hash: string }) {
     
     const { t } = useI18n();
-    const { block, isLoading, error, refetch } = useGetBlock({ hash: hash || undefined, enabled: !!hash });
-    const { transactions, isLoading: isTransactionsLoading, error: transactionsError, refetch: refetchTransactions } = useGetTransactionsByBlockHash(hash);
+    const { block, isLoading, error } = useGetBlock({ hash: hash || undefined, enabled: hash !== undefined});
+    const { transactions, isLoading: isTransactionsLoading, error: transactionsError } = useGetTransactionsByBlockHash(hash);
     const [isLedgerParamsExpanded, setIsLedgerParamsExpanded] = useState(false);
     const [isRawDataExpanded, setIsRawDataExpanded] = useState(false);
 
