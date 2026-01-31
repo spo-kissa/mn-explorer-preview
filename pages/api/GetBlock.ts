@@ -4,7 +4,7 @@ import GetBlockByHeight from "@/lib/db/GetBlockByHeight";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     let hash = req.query.hash as string;
-    let height = req.query.height as string;
+    const height = req.query.height as string;
     
     if (height && !isNaN(Number(height))) {
         const block = await GetBlockByHeight(Number(height));

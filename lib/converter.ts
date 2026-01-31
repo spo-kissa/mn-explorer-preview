@@ -61,17 +61,22 @@ export function normalizeTimestamp(timestamp: Date | number | null): number {
     return 0;
 }
 
-/**
- * IDを正規化します。
- * @param id ID
- * @returns 正規化されたID
- */
-export function normalizeId(id: number | bigint | null): number {
-    if (id === null || id <= 0) {
+
+export function normalizeCount(count: bigint | number | null): number {
+    if (count === null) {
         return 0;
+    }
+    return Number(count);
+}
+
+
+export function normalizeId(id: bigint | number | null): number {
+    if (id === null || id < 0) {
+        throw new Error("ID must be greater than or equal to 0");
     }
     return Number(id);
 }
+
 
 /**
  * インデックスを正規化します。

@@ -54,14 +54,18 @@ export default async function AddressPage({ params }: PageProps) {
                     <div className="">
                         <h2 className="text-lg font-bold mb-2">Transactions</h2>
                         <div>
-                            <div className="grid grid-cols-12 w-full border border-gray-200 dark:border-gray-700 p-3 px-4">
+                            <div className="grid grid-cols-12 w-full border rounded-t-md border-gray-200 dark:border-gray-700 p-3 px-4">
                                 <h2 className="text-sm font-bold col-span-1 text-center">No.</h2>
                                 <h2 className="text-sm font-bold col-span-8 text-cetner">Hash</h2>
                                 <h2 className="text-sm font-bold col-span-3 text-center">Timestamp</h2>
                             </div>
-                            {transactions.map((tx, index) => (
-                                <AddressTransaction key={tx.id} index={index} transaction={tx} />
-                            ))}
+                            {transactions.length > 0 ? (
+                                transactions.map((tx, index) => (
+                                    <AddressTransaction key={tx.id} index={index} transaction={tx} />
+                                ))
+                            ) : (
+                                <div className="text-center text-gray-500 dark:text-gray-400 border border-t-0 rounded-b-md border-gray-200 dark:border-gray-700 p-3 px-4">No transactions found</div>
+                            )}
                         </div>
                     </div>
                 </div>
