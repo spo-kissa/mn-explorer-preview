@@ -1,6 +1,6 @@
 import prisma from "@/lib/db";
 import { Address } from "@/types/address";
-import { normalizeId } from "@/lib/converter";
+import { normalizeId, normalizeTimestamp } from "@/lib/converter";
 
 export default async function GetAddressByHash(hash: string): Promise<Address | null> {
 
@@ -30,7 +30,7 @@ export default async function GetAddressByHash(hash: string): Promise<Address | 
         id: normalizeId(address.id),
         unshielded_address: address.unshielded_address,
         unshielded_address_hex: address.unshielded_address_hex,
-        created_at: address.created_at,
-        updated_at: address.updated_at,
+        created_at: normalizeTimestamp(address.created_at),
+        updated_at: normalizeTimestamp(address.updated_at),
     } as Address;
 }
