@@ -1,13 +1,15 @@
  "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useI18n } from "@/i18n";
 
 export default function CopyToClipboard({ text }: { text: string }) {
     const { t } = useI18n();
     const [copied, setCopied] = useState(false);
 
-    const handleCopy = async () => {
+    const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
         try {
             await navigator.clipboard.writeText(text);
             setCopied(true);
