@@ -10,6 +10,7 @@ export default function SearchElement() {
     const { t } = useI18n();
     const { search, result, isLoading, error, clearResult } = useSearch();
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const firstResultRef = useRef<HTMLAnchorElement>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -26,6 +27,21 @@ export default function SearchElement() {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [result, clearResult]);
+
+    // 検索結果が表示されたら最初の検索結果にフォーカスを当てる
+    useEffect(() => {
+        if (result && !result.error && !isLoading) {
+            const hasResults =
+                (result.addresses?.length ?? 0) > 0 ||
+                (result.blocks?.length ?? 0) > 0 ||
+                (result.transactions?.length ?? 0) > 0;
+            if (hasResults) {
+                setTimeout(() => {
+                    firstResultRef.current?.focus();
+                }, 0);
+            }
+        }
+    }, [result, isLoading]);
 
     const handleSearch = async (type: string, query: string) => {
         console.log("handleSearch called:", { type, query });
@@ -67,14 +83,15 @@ export default function SearchElement() {
                         </div>
                     )}
 
-                    {result && !isLoading && result.addresses.length > 0 && result.addresses.map((address) => (
+                    {result && !isLoading && result.addresses.length > 0 && result.addresses.map((address, index) => (
                         <div key={address.id} className="p-2">
                             <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
                                 {t("search.addressFound")}
                             </div>
                             <Link 
+                                ref={index === 0 ? firstResultRef : undefined}
                                 href={`/address/${address.unshielded_address_hex}`}
-                                className="block p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                                className="block p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset transition-colors"
                                 onClick={clearResult}
                             >
                                 <div className="flex flex-col gap-1">
@@ -89,15 +106,15 @@ export default function SearchElement() {
                         </div>
                     ))}
 
-                    {result && !isLoading && result.blocks.length > 0 && result.blocks.map((block) => (
-                        
+                    {result && !isLoading && result.blocks.length > 0 && result.blocks.map((block, index) => (
                         <div key={block.hash} className="p-2">
                             <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
                                 {t("search.blockFound")}
                             </div>
                             <Link 
+                                ref={result.addresses.length === 0 && index === 0 ? firstResultRef : undefined}
                                 href={`/block/${block.hash}`}
-                                className="block p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                                className="block p-1 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset transition-colors"
                                 onClick={clearResult}
                             >
                                 <div className="flex flex-col gap-1">
@@ -115,15 +132,15 @@ export default function SearchElement() {
                         </div>
                     ))}
 
-                    {result && !isLoading && result.transactions.length > 0 && result.transactions.map((tx) => (
-
+                    {result && !isLoading && result.transactions.length > 0 && result.transactions.map((tx, index) => (
                         <div key={tx.hash} className="p-4">
                             <div className="text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
                                 {t("search.transactionFound")}
                             </div>
                             <Link 
+                                ref={result.addresses.length === 0 && result.blocks.length === 0 && index === 0 ? firstResultRef : undefined}
                                 href={`/transaction/${tx.hash}`}
-                                className="block p-3 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors"
+                                className="block p-3 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-inset transition-colors"
                                 onClick={clearResult}
                             >
                                 <div className="flex flex-col gap-1">
