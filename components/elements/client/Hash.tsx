@@ -16,11 +16,11 @@ interface HashProps {
  * @param className - The class name to apply to the component
  * @returns The Hash component
  */
-export default function Hash({ hash, short = true, length = 4, className = "" }: HashProps) {
+export default function Hash({ hash, short = true, length = 6, className = "" }: HashProps) {
 
     if (short) {
         return (
-            <span className={`font-mono text-xs ${className}`}>
+            <span className={`font-mono text-xs ${className}`} title={hash}>
                 {hash.slice(0, length + 2)}...{hash.slice(-length)}
                 <CopyToClipboard text={hash} />
             </span>
@@ -28,7 +28,7 @@ export default function Hash({ hash, short = true, length = 4, className = "" }:
     }
 
     return (
-        <span className={`font-mono text-xs ${className}`}>
+        <span className={`font-mono text-xs ${className}`} title={hash}>
             {hash}
             <CopyToClipboard text={hash} />
         </span>

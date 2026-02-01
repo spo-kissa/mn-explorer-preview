@@ -43,7 +43,7 @@ export default function IconCard({ icon, title, value, href }: IconCardProps) {
 
     const cardContent = (
         <div
-            className={`flex flex-row items-center justify-center h-full w-full rounded-md overflow-visible
+            className={`flex flex-row items-center justify-stretch w-full h-full rounded-md overflow-visible
                 border-[1px] border-gray-300 dark:border-zinc-700 p-2
                 bg-white dark:bg-zinc-900/50
                 ${href ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors" : ""}
@@ -51,11 +51,11 @@ export default function IconCard({ icon, title, value, href }: IconCardProps) {
             onAnimationEnd={handleAnimationEnd}
         >
             <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-transparent rounded-md object-contain ml-1 dark:invert" />
-            <div className="flex flex-col h-full w-full items-start justify-start mt-1 ml-2">
+            <div className="flex flex-col h-full items-start justify-start mt-1 ml-2">
                 <span className="flex items-start justify-center text-xs font-medium">
                     {title}
                 </span>
-                <span className="flex items-end justify-end h-full w-full text-xl font-bold text-right font-mono pr-1">
+                <span className="flex items-end justify-end h-full text-xl font-bold text-right font-mono pr-1">
                     {value}
                 </span>
             </div>
@@ -63,7 +63,7 @@ export default function IconCard({ icon, title, value, href }: IconCardProps) {
     );
 
     return (
-        <div className="flex flex-row items-center w-full justify-center rounded-md overflow-visible">
+        <div className="basis-1/5 grow">
             {href ? (
                 <Link href={href} className="w-full">
                     {cardContent}

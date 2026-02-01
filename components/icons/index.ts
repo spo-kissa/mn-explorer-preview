@@ -3,6 +3,7 @@ import blocks from "./blocks";
 import transaction from "./transaction";
 import contract from "./contract";
 import address from "./address";
+import extrinsic from "./extrinsic";
 
 // Icon Types
 export type Svg = string;
@@ -29,3 +30,6 @@ export const Contract: SvgIcon = toDataUri(contract()) as SvgIcon;
 
 // Address Icon
 export const Address: SvgIcon = toDataUri(address()) as SvgIcon;
+
+// Extrinsic Icon
+export const Extrinsic: SvgIcon = toDataUri(extrinsic()) as SvgIcon;

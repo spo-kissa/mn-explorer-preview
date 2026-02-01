@@ -51,6 +51,7 @@ export const jaMessages = {
     latestBlock: "最新ブロック高",
     indexedBlocks: "インデックス済みブロック数",
     totalTransactions: "トランザクション総数",
+    totalExtrinsics: "外部実行処理総数",
     totalContracts: "コントラクト総数",
     totalAddresses: "アドレス総数",
     notAvailable: "取得中",
