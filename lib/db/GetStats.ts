@@ -5,6 +5,7 @@ interface Stats {
     indexedBlocks: number;
     totalTransactions: number;
     totalContracts: number;
+    totalAddresses: number;
 }
 
 export default async function GetStats(): Promise<Stats> {
@@ -25,10 +26,13 @@ export default async function GetStats(): Promise<Stats> {
 
     const totalContracts = await prisma.tx_contract_actions.count();
 
+    const totalAddresses = await prisma.addresses.count();
+
     return {
         latestBlockHeight: Number(latestBlock?.height ?? 0),
         indexedBlocks: Number(indexedBlocks),
         totalTransactions: Number(totalTransactions),
         totalContracts: Number(totalContracts),
+        totalAddresses: Number(totalAddresses),
     };
 }

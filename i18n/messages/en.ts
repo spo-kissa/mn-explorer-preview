@@ -24,6 +24,7 @@ export const enMessages = {
     blockFound: "Block Found",
     transactionFound: "Transaction Found",
     invalidQuery: "Invalid query",
+    errorOccurred: "An error occurred",
     height: "Height",
     transactions: "Transactions",
     block: "Block",

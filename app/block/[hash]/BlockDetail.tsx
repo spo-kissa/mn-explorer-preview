@@ -216,7 +216,7 @@ export default function BlockDetail({ hash }: { hash: string }) {
                                         <dt className="col-span-1 font-bold">
                                             {t("blockDetail.index")}
                                         </dt>
-                                        <dd className="col-span-4 font-bold">
+                                        <dd className="col-span-4  font-bold">
                                             {t("blockDetail.hash")}
                                         </dd>
                                         <dd className="col-span-1 font-bold">
@@ -226,14 +226,14 @@ export default function BlockDetail({ hash }: { hash: string }) {
                                 </li>
                                 {txs.map((tx) => (
                                     <Link href={`/transaction/${tx.hash}`} key={tx.index_in_block.toString()}>
-                                        <li className="p-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+                                        <li className="p-2 border border-t-0 border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
                                             <dl className="grid grid-cols-6 gap-1 items-center">
                                                 <dt className="col-span-1 font-mono text-sm align-middle">
                                                     <span className={`h-[32px] w-[32px] inline-flex items-center justify-center border border-gray-200 dark:border-gray-700 rounded-md ${tx.status === "SUCCESS" ? "bg-green-500" : "bg-red-500"} text-white`}>
                                                         {(tx.index_in_block + 1).toString()}
                                                     </span>
                                                 </dt>
-                                                <dd className="col-span-4 font-mono text-sm">
+                                                <dd className="col-span-4 font-mono text-xs">
                                                     {tx.hash}
                                                     <span className="ml-2"><CopyToClipboard text={tx.hash} /></span>
                                                 </dd>

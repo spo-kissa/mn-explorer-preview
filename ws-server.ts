@@ -1,8 +1,9 @@
 // Bun ネイティブの WebSocket サーバ
+import type { ServerWebSocket } from "bun";
 
-import GetStats from "@/lib/db/GetStats";
-import GetRecentBlocks from "@/lib/db/GetRecentBlocks";
-import GetRecentTransactions from "@/lib/db/GetRecentTransactions";
+import GetStats from "./lib/db/GetStats";
+import GetRecentBlocks from "./lib/db/GetRecentBlocks";
+import GetRecentTransactions from "./lib/db/GetRecentTransactions";
 
 interface RecentBlock {
     height: number;
@@ -24,6 +25,7 @@ interface Stats {
     indexedBlocks: number;
     totalTransactions: number;
     totalContracts: number;
+    totalAddresses: number;
 }
 
 interface StatusMessage {
@@ -44,7 +46,6 @@ const WS_PATH = "/ws/api/v1";
 // 接続中クライアントを管理
 const clients = new Set<ServerWebSocket<unknown>>();
 
-
 // 最新の統計情報を取得
 async function fetchLatestStatus(): Promise<StatusMessage> {
     const stats = await GetStats();
@@ -52,7 +53,7 @@ async function fetchLatestStatus(): Promise<StatusMessage> {
     const recentTransactions = await GetRecentTransactions(10);
 
     return {
-        type: "status.snapshot",
+        type: "stats.snapshot",
         timestamp: Date.now(),
         stats: stats,
         recentBlocks: recentBlocks,
@@ -137,7 +138,7 @@ const server = Bun.serve({
         },
 
         // メッセージ受信時
-        message(ws, message: WSData) {
+        message(ws, message: string | Buffer | ArrayBuffer) {
             let text: string;
 
             if (typeof message === "string") {

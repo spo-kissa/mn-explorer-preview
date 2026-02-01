@@ -56,34 +56,55 @@ export default function useSearch(): UseSearchResult {
                 signal: abortController.signal,
             });
             console.log("Response status:", response.status, response.ok);
-            
-            const data = await response.json();
-            console.log("Response data:", data);
+
+            const text = await response.text();
 
             // リクエストがキャンセルされた場合は何もしない
             if (abortController.signal.aborted) {
                 return;
             }
 
-            if (!response.ok) {
-                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            let data: unknown;
+            try {
+                data = JSON.parse(text);
+            } catch {
+                // サーバーが HTML エラーページなどを返した場合
+                setError("ERROR_OCCURRED");
+                setResult(null);
+                return;
             }
+            console.log("Response data:", data);
 
-            if (data.error) {
-                setError(data.error || "Failed to search");
+            if (!response.ok) {
+                setError("ERROR_OCCURRED");
                 setResult(null);
                 return;
             }
 
-            setResult(data);
+            if (
+                typeof data === "object" &&
+                data !== null &&
+                "error" in data &&
+                (data as { error: unknown }).error
+            ) {
+                setError(
+                    typeof (data as { error: unknown }).error === "string"
+                        ? (data as { error: string }).error
+                        : "ERROR_OCCURRED",
+                );
+                setResult(null);
+                return;
+            }
+
+            setResult(data as Parameters<typeof setResult>[0]);
         } catch (err) {
             // AbortErrorは無視（ユーザーが新しい検索を開始した場合）
             if (err instanceof Error && err.name === "AbortError") {
                 return;
             }
             console.error("Search error:", err);
-            const errorMessage = err instanceof Error ? err.message : "Failed to search";
-            setError(errorMessage);
+            // ネットワークエラーやパースエラーなどはユーザー向けメッセージに統一
+            setError("ERROR_OCCURRED");
             setResult(null);
         } finally {
             // リクエストがキャンセルされていない場合のみローディング状態を更新

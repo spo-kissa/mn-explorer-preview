@@ -22,10 +22,11 @@ export interface Stats {
     indexedBlocks: number;
     totalTransactions: number;
     totalContracts: number;
+    totalAddresses: number;
 }
 
 export interface StatusMessage {
-    type: "status.snapshot";
+    type: "stats.snapshot";
     timestamp: number;
     stats: Stats;
     recentBlocks: RecentBlock[];
@@ -86,7 +87,7 @@ export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}
             try {
                 const data = JSON.parse(String(event.data)) as StatusMessage;
 
-                if (data.type !== "status.snapshot") {
+                if (data.type !== "stats.snapshot") {
                     console.warn("[StatsWS] unknown message type", data);
                     return;
                 }

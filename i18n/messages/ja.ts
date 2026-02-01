@@ -27,6 +27,7 @@ export const jaMessages = {
     addressHex: "ハッシュ",
     address: "アドレス",
     invalidQuery: "検索条件が不正です",
+    errorOccurred: "エラーが発生しました",
     height: "高さ",
     transactions: "トランザクション数",
     block: "ブロック",

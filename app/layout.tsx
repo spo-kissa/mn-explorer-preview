@@ -56,6 +56,8 @@ export default async function RootLayout({
             <Footer />
           </ErrorBoundary>
         </I18nProvider>
+        {/* ポータル用。body の最後に置き DOM 順で前面に。fixed + z-max + pointer-events-none（空のときはクリックを通す） */}
+        <div id="portal-root" className="fixed inset-0 z-[9999] pointer-events-none" />
       </body>
     </html>
   );

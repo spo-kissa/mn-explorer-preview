@@ -40,7 +40,10 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
     }, []);
 
     const handleSearch = () => {
-        console.log("SearchBox handleSearch called", { selectedType, searchQuery, onSearch: !!onSearch });
+        if (!searchQuery.trim()) {
+            inputRef.current?.focus();
+            return;
+        }
         if (onSearch) {
             onSearch(selectedType, searchQuery);
         } else {
@@ -55,7 +58,7 @@ export default function SearchBox({ onSearch }: SearchBoxProps) {
                 <button
                     type="button"
                     onClick={() => setIsOpen(!isOpen)}
-                    className="flex items-center justify-center gap-1 px-3 py-2 text-sm rounded-l-md border-[1px] border-r-0 border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:ring-opacity-50 focus:z-10 dark:bg-zinc-900 dark:border-zinc-700 dark:hover:bg-zinc-800"
+                    className="flex items-center whitespace-nowrap justify-center gap-1 px-3 py-2 text-sm rounded-l-md border-[1px] border-r-0 border-gray-300 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-blue-300 focus:ring-opacity-50 focus:z-10 dark:bg-zinc-900 dark:border-zinc-700 dark:hover:bg-zinc-800"
                 >
                     <span>
                         {searchTypes.find((tItem) => tItem.key === selectedType)?.label ??

@@ -14,12 +14,15 @@ interface IconCardProps {
 export default function IconCard({ icon, title, value, href }: IconCardProps) {
     const prevValueRef = useRef<string | undefined>(value);
     const [glowing, setGlowing] = useState(false);
+    const didUpdate = useRef(false);
 
     useEffect(() => {
-        if (value !== prevValueRef.current) {
-            prevValueRef.current = value;
-            setGlowing(true);
+        if (didUpdate.current && prevValueRef.current !== value) {
+            // Schedule setGlowing to avoid cascading renders in the same commit
+            setTimeout(() => setGlowing(true), 0);
         }
+        didUpdate.current = true;
+        prevValueRef.current = value;
     }, [value]);
 
     const handleAnimationEnd = useCallback((e: React.AnimationEvent) => {
@@ -40,7 +43,7 @@ export default function IconCard({ icon, title, value, href }: IconCardProps) {
 
     const cardContent = (
         <div
-            className={`flex flex-row items-center justify-center w-full rounded-md overflow-visible
+            className={`flex flex-row items-center justify-center h-full w-full rounded-md overflow-visible
                 border-[1px] border-gray-300 dark:border-zinc-700 p-2
                 bg-white dark:bg-zinc-900/50
                 ${href ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors" : ""}
@@ -48,9 +51,13 @@ export default function IconCard({ icon, title, value, href }: IconCardProps) {
             onAnimationEnd={handleAnimationEnd}
         >
             <Image src={icon} alt="Icon" width={48} height={48} unoptimized className="bg-transparent rounded-md object-contain ml-1 dark:invert" />
-            <div className="flex flex-col w-full items-start justify-start mt-1 ml-2">
-                <span className="flex items-center justify-center text-xs font-medium">{title}</span>
-                <span className="flex items-center justify-end w-full text-xl font-bold text-right font-mono pr-1">{value}</span>
+            <div className="flex flex-col h-full w-full items-start justify-start mt-1 ml-2">
+                <span className="flex items-start justify-center text-xs font-medium">
+                    {title}
+                </span>
+                <span className="flex items-end justify-end h-full w-full text-xl font-bold text-right font-mono pr-1">
+                    {value}
+                </span>
             </div>
         </div>
     );
