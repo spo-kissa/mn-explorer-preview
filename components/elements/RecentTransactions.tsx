@@ -1,7 +1,7 @@
 "use client";
 
 import RecentTransaction from "./RecentTransaction";
-import { RecentTransaction as RecentTransactionType } from "@/app/hooks/useStatsWebSocket";
+import type { RecentTransaction as RecentTransactionType } from "@/types/stats";
 import { useI18n } from "@/i18n";
 
 export default function RecentTransactions({ txs }: { txs: RecentTransactionType[] }) {

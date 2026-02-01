@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { RecentBlock as RecentBlockType } from "@/app/hooks/useStatsWebSocket";
+import type { RecentBlock } from "@/types/stats";
 import { useI18n } from "@/i18n";
 import DateTime from "@/components/elements/DateTime";
 import Hash from "./client/Hash";
 
-export default function RecentBlock({ block }: { block: RecentBlockType }) {
+export default function RecentBlock({ block }: { block: RecentBlock }) {
 
     const { t } = useI18n();
 

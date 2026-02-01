@@ -1,6 +1,6 @@
 "use client";
 
-import { RecentTransaction as RecentTransactionType } from "@/app/hooks/useStatsWebSocket";
+import type { RecentTransaction as RecentTransactionType } from "@/types/stats";
 import Link from "next/link";
 import DateTime from "@/components/elements/DateTime";
 import Hash from "./client/Hash";
