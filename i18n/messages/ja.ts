@@ -27,6 +27,7 @@ export const jaMessages = {
     addressHex: "ハッシュ",
     address: "アドレス",
     invalidQuery: "検索条件が不正です",
+    errorOccurred: "エラーが発生しました",
     height: "高さ",
     transactions: "トランザクション数",
     block: "ブロック",
@@ -50,7 +51,9 @@ export const jaMessages = {
     latestBlock: "最新ブロック高",
     indexedBlocks: "インデックス済みブロック数",
     totalTransactions: "トランザクション総数",
+    totalExtrinsics: "外部実行処理総数",
     totalContracts: "コントラクト総数",
+    totalAddresses: "アドレス総数",
     notAvailable: "取得中",
   },
   blockDetail: {

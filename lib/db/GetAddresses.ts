@@ -13,14 +13,14 @@ export default async function GetAddresses(): Promise<AddressWithStats[]> {
                COUNT(IO.address_id) AS tx_count,
                MIN(IO.ctime) AS min_time,
                MAX(IO.ctime) AS max_time
-        FROM addresses AS A
+        FROM mn_preview_indexer.addresses AS A
         LEFT JOIN
         (
             SELECT address_id, ctime
-            FROM tx_inputs
+            FROM mn_preview_indexer.tx_inputs
             UNION ALL
             SELECT address_id, ctime
-            FROM tx_outputs
+            FROM mn_preview_indexer.tx_outputs
         ) AS IO ON A.id=IO.address_id
         GROUP BY id, address_id, unshielded_address, unshielded_address_hex, created_at, updated_at
         ORDER BY updated_at DESC

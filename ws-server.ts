@@ -1,38 +1,10 @@
 // Bun ネイティブの WebSocket サーバ
+import type { ServerWebSocket } from "bun";
 
-import GetStats from "@/lib/db/GetStats";
-import GetRecentBlocks from "@/lib/db/GetRecentBlocks";
-import GetRecentTransactions from "@/lib/db/GetRecentTransactions";
-
-interface RecentBlock {
-    height: number;
-    hash: string;
-    timestamp: number;
-    txsCount: number;
-}
-
-interface RecentTransaction {
-    hash: string;
-    timestamp: number;
-    status: string;
-    block_height: number;
-    index_in_block: number;
-}
-
-interface Stats {
-    latestBlockHeight: number;
-    indexedBlocks: number;
-    totalTransactions: number;
-    totalContracts: number;
-}
-
-interface StatusMessage {
-    type: "stats.snapshot";
-    timestamp: number;
-    stats: Stats;
-    recentBlocks: RecentBlock[];
-    recentTransactions: RecentTransaction[];
-}
+import GetStats from "./lib/db/GetStats";
+import GetRecentBlocks from "./lib/db/GetRecentBlocks";
+import GetRecentTransactions from "./lib/db/GetRecentTransactions";
+import type { StatusMessage } from "./types/stats";
 
 interface WSData {
     type: string;
@@ -44,7 +16,6 @@ const WS_PATH = "/ws/api/v1";
 // 接続中クライアントを管理
 const clients = new Set<ServerWebSocket<unknown>>();
 
-
 // 最新の統計情報を取得
 async function fetchLatestStatus(): Promise<StatusMessage> {
     const stats = await GetStats();
@@ -52,7 +23,7 @@ async function fetchLatestStatus(): Promise<StatusMessage> {
     const recentTransactions = await GetRecentTransactions(10);
 
     return {
-        type: "status.snapshot",
+        type: "stats.snapshot",
         timestamp: Date.now(),
         stats: stats,
         recentBlocks: recentBlocks,
@@ -137,7 +108,7 @@ const server = Bun.serve({
         },
 
         // メッセージ受信時
-        message(ws, message: WSData) {
+        message(ws, message: string | Buffer | ArrayBuffer) {
             let text: string;
 
             if (typeof message === "string") {
@@ -157,7 +128,7 @@ const server = Bun.serve({
             console.log("[WS] Client disconnected", code, reason);
         },
 
-        error(ws, error) {
+        error(_ws: ServerWebSocket<unknown>, error: Error) {
             console.error("[WS] Error: ", error);
         }
     },

@@ -11,14 +11,14 @@ export default async function GetTransactionsByAddressId(addressId: number): Pro
 
     const transactions = await prisma.$queryRaw`
         SELECT *
-        FROM transactions
+        FROM mn_preview_indexer.transactions
         WHERE id IN (
             SELECT tx_id
-            FROM tx_inputs
+            FROM mn_preview_indexer.tx_inputs
             WHERE address_id = ${addressId}
             UNION ALL
             SELECT tx_id
-            FROM tx_outputs
+            FROM mn_preview_indexer.tx_outputs
             WHERE address_id = ${addressId}
         )
         ORDER BY block_height DESC

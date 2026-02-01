@@ -1,7 +1,7 @@
 "use client";
 
 import RecentBlock from "./RecentBlock";
-import { RecentBlock as RecentBlockType } from "@/app/hooks/useStatsWebSocket";
+import type { RecentBlock as RecentBlockType } from "@/types/stats";
 import { useI18n } from "@/i18n";
 
 export default function RecentBlocks({ blocks }: { blocks: RecentBlockType[] }) {
