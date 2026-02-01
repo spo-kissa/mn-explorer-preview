@@ -49,6 +49,7 @@ export const enMessages = {
     indexedBlocks: "Indexed Blocks",
     totalTransactions: "Total Transactions",
     totalContracts: "Total Contracts",
+    totalAddresses: "Total Addresses",
     notAvailable: "N/A",
   },
   blockDetail: {

@@ -52,6 +52,7 @@ export const jaMessages = {
     indexedBlocks: "インデックス済みブロック数",
     totalTransactions: "トランザクション総数",
     totalContracts: "コントラクト総数",
+    totalAddresses: "アドレス総数",
     notAvailable: "取得中",
   },
   blockDetail: {

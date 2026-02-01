@@ -32,6 +32,11 @@ export default function Stats({ stats }: { stats?: StatsType | undefined }) {
                 value={(stats?.totalContracts?.toLocaleString() ?? na)} 
                 icon={Icons.Contract}
             />
+            <IconCard
+                title={t("stats.totalAddresses")}
+                value={(stats?.totalAddresses?.toLocaleString() ?? na)}
+                icon={Icons.Address}
+            />
         </div>
     );
 }

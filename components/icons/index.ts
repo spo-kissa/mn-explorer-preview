@@ -2,6 +2,7 @@ import block from "./block";
 import blocks from "./blocks";
 import transaction from "./transaction";
 import contract from "./contract";
+import address from "./address";
 
 // Icon Types
 export type Svg = string;
@@ -25,3 +26,6 @@ export const Transaction: SvgIcon = toDataUri(transaction());
 
 // Contract Icon
 export const Contract: SvgIcon = toDataUri(contract()) as SvgIcon;
+
+// Address Icon
+export const Address: SvgIcon = toDataUri(address()) as SvgIcon;
