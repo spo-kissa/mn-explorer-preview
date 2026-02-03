@@ -112,7 +112,7 @@ export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}
                 if (readyState === WebSocket.OPEN) {
                     try {
                         socket.close();
-                    } catch (error) {
+                    } catch {
                         // エラーは無視（既に閉じられている可能性がある）
                     }
                 } else if (readyState === WebSocket.CONNECTING) {
