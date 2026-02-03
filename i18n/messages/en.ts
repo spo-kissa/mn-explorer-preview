@@ -48,6 +48,7 @@ export const enMessages = {
     latestBlock: "Latest Block",
     indexedBlocks: "Indexed Blocks",
     totalTransactions: "Total Transactions",
+    totalExtrinsic: "Total Extrinsic",
     totalContracts: "Total Contracts",
     totalAddresses: "Total Addresses",
     notAvailable: "N/A",
