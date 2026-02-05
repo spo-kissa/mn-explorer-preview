@@ -1,3 +1,5 @@
+'use client';
+
 import { Address } from "@/types/address";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";
 

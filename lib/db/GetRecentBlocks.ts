@@ -14,16 +14,16 @@ export default async function GetRecentBlocks(count: number = 10): Promise<Recen
     }
 
     const blocks = await prisma.blocks.findMany({
-        orderBy: {
-            height: "desc"
-        },
-        take: count,
         select: {
             height: true,
             hash: true,
             timestamp: true,
             tx_count: true,
-        }
+        },
+        orderBy: [
+            { height: "desc" }
+        ],
+        take: count
     });
 
     return blocks.map((block) => ({

@@ -14,6 +14,17 @@ export interface RecentTransaction {
     index_in_block: number;
 }
 
+export interface RecentExtrinsic {
+    hash: string;
+    section: string;
+    method: string;
+    index_in_block: number;
+    height: number;
+    timestamp: number;
+    block_hash: string;
+}
+
+
 export interface Stats {
     latestBlockHeight: number;
     indexedBlocks: number;
@@ -23,10 +34,11 @@ export interface Stats {
     totalAddresses: number;
 }
 
-export interface StatusMessage {
+export interface StatsMessage {
     type: "stats.snapshot";
     timestamp: number;
     stats: Stats;
     recentBlocks: RecentBlock[];
     recentTransactions: RecentTransaction[];
+    recentExtrinsics: RecentExtrinsic[];
 }

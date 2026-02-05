@@ -42,6 +42,9 @@ export const jaMessages = {
     secondsAgo: "{{seconds}} 秒前",
     txs: "{{count}} 件のトランザクション",
   },
+  recentExtrinsics: {
+    title: "最新の外部実行処理",
+  },
   recentTransactions: {
     title: "最新トランザクション",
     secondsAgo: "{{seconds}} 秒前",
@@ -80,6 +83,20 @@ export const jaMessages = {
     falseLabel: "いいえ",
     bytesSuffix: "バイト",
   },
+  extrinsicDetail: {
+    title: "外部実行処理詳細",
+    summary: "サマリー",
+    hash: "ハッシュ",
+    blockHash: "ブロックハッシュ",
+    section: "セクション",
+    method: "メソッド",
+    indexInBlock: "ブロック内インデックス",
+    signer: "署名者",
+    args: "引数",
+    rawData: "生データ",
+    data: "データ",
+    noData: "データがありません",
+  },
   transactionDetail: {
     summary: "サマリー",
     transactionHash: "トランザクションハッシュ",
@@ -106,6 +123,14 @@ export const jaMessages = {
     trueLabel: "はい",
     falseLabel: "いいえ",
     notFound: "トランザクションが見つかりません",
+  },
+  addressDetail: {
+    title: "アドレス詳細",
+    transactions: "トランザクション",
+    no: "番号",
+    hash: "ハッシュ",
+    timestamp: "タイムスタンプ",
+    noTransactionsFound: "このアドレスにはトランザクションがありません。",
   },
 } as const;
 
