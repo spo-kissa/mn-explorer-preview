@@ -1,3 +1,5 @@
+'use client';
+
 import Link from "next/link";
 import { Transaction } from "@/types/transaction";
 import CopyToClipboard from "@/components/elements/CopyToClipboard";

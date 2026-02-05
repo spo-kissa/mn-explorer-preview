@@ -4,7 +4,8 @@ import type { ServerWebSocket } from "bun";
 import GetStats from "./lib/db/GetStats";
 import GetRecentBlocks from "./lib/db/GetRecentBlocks";
 import GetRecentTransactions from "./lib/db/GetRecentTransactions";
-import type { StatusMessage } from "./types/stats";
+import GetRecentExtrinsics from "./lib/db/GetRecentExtrinsics";
+import type { StatsMessage } from "./types/stats";
 
 interface WSData {
     type: string;
@@ -17,10 +18,11 @@ const WS_PATH = "/ws/api/v1";
 const clients = new Set<ServerWebSocket<unknown>>();
 
 // 最新の統計情報を取得
-async function fetchLatestStatus(): Promise<StatusMessage> {
+async function fetchLatestStatus(): Promise<StatsMessage> {
     const stats = await GetStats();
     const recentBlocks = await GetRecentBlocks(10);
     const recentTransactions = await GetRecentTransactions(10);
+    const recentExtrinsics = await GetRecentExtrinsics(10);
 
     return {
         type: "stats.snapshot",
@@ -28,6 +30,7 @@ async function fetchLatestStatus(): Promise<StatusMessage> {
         stats: stats,
         recentBlocks: recentBlocks,
         recentTransactions: recentTransactions,
+        recentExtrinsics: recentExtrinsics,
     };
 }
 
@@ -49,7 +52,7 @@ async function broadcastStatus() {
     }
 }
 
-async function sendStatus(ws: ServerWebSocket<unknown>, status: StatusMessage | null = null) {
+async function sendStatus(ws: ServerWebSocket<unknown>, status: StatsMessage | null = null) {
     try {
         if (!status) {
             status = await fetchLatestStatus();

@@ -15,18 +15,18 @@ export default async function GetRecentTransactions(count: number = 10): Promise
     }
 
     const transactions = await prisma.transactions.findMany({
-        orderBy: [
-            { timestamp: "desc" },
-            { index_in_block: "desc" }
-        ],
-        take: count,
         select: {
             hash: true,
             timestamp: true,
             status: true,
             block_height: true,
             index_in_block: true,
-        }
+        },
+        orderBy: [
+            { timestamp: "desc" },
+            { index_in_block: "desc" }
+        ],
+        take: count
     });
 
     return transactions.map((transaction) => ({

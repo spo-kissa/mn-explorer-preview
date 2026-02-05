@@ -3,6 +3,7 @@ import Header from "@/components/layouts/Header";
 import Footer from "@/components/layouts/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Geist, Geist_Mono } from "next/font/google";
 import { headers } from "next/headers";
 import { I18nProvider, type Locale } from "@/i18n";
@@ -44,18 +45,20 @@ export default async function RootLayout({
   const initialLocale = await detectLocaleFromHeaders();
 
   return (
-    <html lang={initialLocale}>
+    <html lang={initialLocale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <GoogleAnalytics />
-        <I18nProvider initialLocale={initialLocale}>
-          <ErrorBoundary>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </ErrorBoundary>
-        </I18nProvider>
+        <ThemeProvider>
+          <I18nProvider initialLocale={initialLocale}>
+            <ErrorBoundary>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </ErrorBoundary>
+          </I18nProvider>
+        </ThemeProvider>
         {/* ポータル用。body の最後に置き DOM 順で前面に。fixed + z-max + pointer-events-none（空のときはクリックを通す） */}
         <div id="portal-root" className="fixed inset-0 z-[9999] pointer-events-none" />
       </body>

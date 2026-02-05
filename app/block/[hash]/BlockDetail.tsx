@@ -87,7 +87,7 @@ export default function BlockDetail({ hash }: { hash: string }) {
         }
         
         return (
-            <div className="max-w-7xlspace-y-4">
+            <div className="max-w-7xl space-y-4">
                 <div className="border border-gray-200 dark:border-gray-700 mb-6 p-4 rounded-lg">
 
                     <h2 className="text-2xl font-bold mb-4 ml-2">{t("blockDetail.summary")}</h2>

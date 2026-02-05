@@ -23,7 +23,7 @@ export default function Stats({ stats }: { stats?: Stats | undefined }) {
                 icon={Icons.Blocks}
             />
             <IconCard
-                title={t("stats.totalExtrinsic")}
+                title={t("stats.totalExtrinsics")}
                 value={(stats?.totalExtrinsics?.toLocaleString() ?? na)}
                 icon={Icons.Extrinsic}
             />

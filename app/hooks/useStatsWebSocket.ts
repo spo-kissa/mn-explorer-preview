@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { StatusMessage } from "@/types/stats";
+import type { StatsMessage } from "@/types/stats";
 
 interface UseStatsWebSocketOptions {
     url?: string;
@@ -11,7 +11,7 @@ interface UseStatsWebSocketOptions {
 export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}) {
     const { url, historySeconds = 60 } = options;
 
-    const [status, setStatus] = useState<StatusMessage | null>(null);
+    const [stats, setStats] = useState<StatsMessage | null>(null);
     const [isConnected, setIsConnected] = useState(false);
     const socketRef = useRef<WebSocket | null>(null);
     const isMountedRef = useRef(true);
@@ -55,14 +55,14 @@ export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}
             if (!isMountedRef.current) return;
             
             try {
-                const data = JSON.parse(String(event.data)) as StatusMessage;
+                const data = JSON.parse(String(event.data)) as StatsMessage;
 
                 if (data.type !== "stats.snapshot") {
                     console.warn("[StatsWS] unknown message type", data);
                     return;
                 }
 
-                setStatus(data);
+                setStats(data);
             } catch (e) {
                 console.error("[StatsWS] parse error", e, event.data);
             }
@@ -126,7 +126,7 @@ export default function useStatsWebSocket(options: UseStatsWebSocketOptions = {}
     }, [url, historySeconds]);
 
     return {
-        status,
+        stats,
         isConnected,
     };
 }

@@ -1,3 +1,5 @@
+import extrinsic from "@/components/icons/extrinsic";
+
 export const enMessages = {
   common: {
     siteName: "mn-explorer.net",
@@ -39,6 +41,9 @@ export const enMessages = {
     secondsAgo: "{{seconds}} seconds ago",
     txs: "{{count}} txs",
   },
+  recentExtrinsics: {
+    title: "Recent Extrinsics",
+  },
   recentTransactions: {
     title: "Recent Transactions",
     secondsAgo: "{{seconds}} seconds ago",
@@ -48,7 +53,7 @@ export const enMessages = {
     latestBlock: "Latest Block",
     indexedBlocks: "Indexed Blocks",
     totalTransactions: "Total Transactions",
-    totalExtrinsic: "Total Extrinsic",
+    totalExtrinsics: "Total Extrinsics",
     totalContracts: "Total Contracts",
     totalAddresses: "Total Addresses",
     notAvailable: "N/A",
@@ -77,6 +82,20 @@ export const enMessages = {
     falseLabel: "FALSE",
     bytesSuffix: "bytes",
   },
+  extrinsicDetail: {
+    summary: "Summary",
+    title: "Extrinsic Detail",
+    hash: "Hash",
+    blockHash: "Block Hash",
+    section: "Section",
+    method: "Method",
+    indexInBlock: "Index in Block",
+    signer: "Signer",
+    args: "Arguments",
+    rawData: "Raw Data",
+    data: "Data",
+    noData: "No data available",
+  },
   transactionDetail: {
     summary: "Summary",
     transactionHash: "Transaction Hash",
@@ -103,6 +122,14 @@ export const enMessages = {
     trueLabel: "TRUE",
     falseLabel: "FALSE",
     notFound: "Transaction not found",
+  },
+  addressDetail: {
+    title: "Address Detail",
+    transactions: "Transactions",
+    no: "No.",
+    hash: "Hash",
+    timestamp: "Timestamp",
+    noTransactionsFound: "No transactions found for this address.",
   },
 } as const;
 
